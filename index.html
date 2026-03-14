@@ -1,0 +1,912 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>H-1B Visa & Offshoring Analysis | 2000–2025</title>
+<meta name="description" content="Interactive data visualization of U.S. H-1B visa usage, offshoring trends, and labor market impact from 2000–2025. Built from official USCIS, DOL, and BLS data.">
+<meta property="og:title" content="U.S. → India: The Great Offshoring (2000–2025)">
+<meta property="og:description" content="Interactive H-1B visa analysis from 844,054 official USCIS filings. 4.78M approvals, 576K to outsourcing firms, $34M Infosys fraud fine, Dunkin' Brands case study. 50 charts across 10 tabs.">
+<meta property="og:image" content="https://duncanburns2013-dot.github.io/H1B/social-card.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:url" content="https://duncanburns2013-dot.github.io/H1B/">
+<meta property="og:type" content="website">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="U.S. → India: The Great Offshoring (2000–2025)">
+<meta name="twitter:description" content="844,054 USCIS filings analyzed. H-1B visa abuse, outsourcing, wage suppression, and AI displacement. 50 interactive charts.">
+<meta name="twitter:image" content="https://duncanburns2013-dot.github.io/H1B/social-card.png">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/chartjs-plugin-annotation/3.0.1/chartjs-plugin-annotation.min.js"></script>
+<style>
+:root {
+  --bg-primary: #050510;
+  --bg-secondary: #0a0a1f;
+  --bg-card: linear-gradient(145deg, #0d0d25, #12123a);
+  --border-card: #1a1a55;
+  --border-active: #0066ff;
+  --text-primary: #ffffff;
+  --text-secondary: #b0b8d0;
+  --text-muted: #7080a0;
+  --blue: #0088ff; --red: #ff1744; --green: #00e676;
+  --purple: #d500f9; --orange: #ff6d00; --yellow: #ffea00;
+  --cyan: #00e5ff;
+}
+*, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+body { font-family: 'Segoe UI', system-ui, -apple-system, sans-serif; background: var(--bg-primary); color: var(--text-primary); min-height: 100vh; overflow-x: hidden; }
+
+/* ===== HERO ===== */
+.hero {
+  background: linear-gradient(135deg, #050520 0%, #0a0a30 40%, #100838 100%);
+  padding: 32px 40px 0;
+  border-bottom: 2px solid;
+  border-image: linear-gradient(90deg, #ff1744, #0088ff, #ffea00) 1;
+  position: sticky; top: 0; z-index: 100;
+  box-shadow: 0 4px 30px rgba(0,0,0,0.8), 0 0 60px rgba(0,100,255,0.1);
+}
+.hero-inner { max-width: 1400px; margin: 0 auto; }
+.hero h1 {
+  font-size: 1.8rem; font-weight: 900;
+  background: linear-gradient(90deg, #ff1744, #ff6d00, #ffea00, #00e5ff, #0088ff, #d500f9);
+  background-size: 300% 100%;
+  -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+  letter-spacing: -0.5px;
+  animation: heroShift 8s ease-in-out infinite;
+  text-shadow: 0 0 40px rgba(0,100,255,0.3);
+}
+@keyframes heroShift { 0%,100%{background-position:0% 50%} 50%{background-position:100% 50%} }
+.hero .tagline { font-size: 0.85rem; color: #d0d8f0; margin-top: 6px; font-weight: 500; }
+.hero .anchor { font-size: 0.74rem; color: #ffea00; font-weight: 700; margin-top: 4px; text-shadow: 0 0 10px rgba(255,234,0,0.4); }
+
+/* ===== TABS ===== */
+.tab-nav {
+  display: flex; gap: 0; margin-top: 16px;
+  border-bottom: 2px solid transparent;
+  overflow-x: auto; scrollbar-width: none;
+}
+.tab-nav::-webkit-scrollbar { display: none; }
+.tab-btn {
+  padding: 10px 20px; font-size: 0.78rem; font-weight: 700;
+  color: #5566aa; background: transparent; border: none;
+  border-bottom: 3px solid transparent; cursor: pointer;
+  white-space: nowrap; transition: all 0.3s ease;
+  text-transform: uppercase; letter-spacing: 1px;
+}
+.tab-btn:hover { color: #88aaff; text-shadow: 0 0 12px rgba(0,100,255,0.5); }
+.tab-btn.active {
+  color: #0088ff; border-bottom-color: #0088ff;
+  background: rgba(0,136,255,0.08);
+  text-shadow: 0 0 15px rgba(0,136,255,0.6);
+}
+.tab-btn[data-tab="exposure"].active { color: #ffea00; border-bottom-color: #ffea00; background: rgba(255,234,0,0.06); text-shadow: 0 0 15px rgba(255,234,0,0.5); }
+.tab-btn[data-tab="jobs"].active { color: #ff1744; border-bottom-color: #ff1744; background: rgba(255,23,68,0.06); text-shadow: 0 0 15px rgba(255,23,68,0.5); }
+.tab-btn[data-tab="pipeline"].active { color: #ff6d00; border-bottom-color: #ff6d00; background: rgba(255,109,0,0.06); text-shadow: 0 0 15px rgba(255,109,0,0.5); }
+.tab-btn[data-tab="law"].active { color: #d500f9; border-bottom-color: #d500f9; background: rgba(213,0,249,0.06); text-shadow: 0 0 15px rgba(213,0,249,0.5); }
+.tab-btn[data-tab="ai"].active { color: #00e5ff; border-bottom-color: #00e5ff; background: rgba(0,229,255,0.06); text-shadow: 0 0 15px rgba(0,229,255,0.5); }
+
+/* ===== TAB CONTENT ===== */
+.tab-panel { display: none; animation: fadeUp 0.35s ease; max-width: 1400px; margin: 0 auto; }
+.tab-panel.active { display: block; }
+@keyframes fadeUp { from { opacity: 0; transform: translateY(12px); } to { opacity: 1; transform: translateY(0); } }
+
+/* ===== KPI STRIP ===== */
+.kpi-strip {
+  display: grid; grid-template-columns: repeat(auto-fit, minmax(165px, 1fr));
+  gap: 12px; padding: 20px 40px; background: var(--bg-secondary);
+}
+.kpi { background: var(--bg-card); border: 1px solid var(--border-card); border-radius: 12px; padding: 18px 14px; text-align: center; transition: transform 0.3s, border-color 0.3s, box-shadow 0.3s; }
+.kpi:hover { transform: translateY(-4px) scale(1.02); border-color: var(--border-active); box-shadow: 0 8px 30px rgba(0,100,255,0.2); }
+.kpi-val { font-size: 1.75rem; font-weight: 900; margin-bottom: 4px; }
+.kpi-lbl { font-size: 0.7rem; color: #b0b8d0; text-transform: uppercase; letter-spacing: 0.5px; line-height: 1.35; }
+.kpi-val.r { color: #ff1744; text-shadow: 0 0 20px rgba(255,23,68,0.5); }
+.kpi-val.b { color: #0088ff; text-shadow: 0 0 20px rgba(0,136,255,0.5); }
+.kpi-val.g { color: #00e676; text-shadow: 0 0 20px rgba(0,230,118,0.5); }
+.kpi-val.p { color: #d500f9; text-shadow: 0 0 20px rgba(213,0,249,0.5); }
+.kpi-val.o { color: #ff6d00; text-shadow: 0 0 20px rgba(255,109,0,0.5); }
+.kpi-val.y { color: #ffea00; text-shadow: 0 0 20px rgba(255,234,0,0.5); }
+
+/* ===== CHART GRID ===== */
+.grid { display: grid; grid-template-columns: 1fr 1fr; gap: 18px; padding: 20px 40px 32px; }
+.card {
+  background: var(--bg-card); border: 1px solid var(--border-card);
+  border-radius: 12px; padding: 24px; transition: all 0.3s ease;
+}
+.card:hover { border-color: rgba(0,136,255,0.5); box-shadow: 0 4px 25px rgba(0,100,255,0.15); }
+.card.wide { grid-column: 1 / -1; }
+.card.alert { border-color: #cc5500; box-shadow: inset 0 0 30px rgba(255,109,0,0.05); }
+.card.alert:hover { box-shadow: 0 4px 25px rgba(255,109,0,0.2); }
+.card.danger { border-color: #cc0022; box-shadow: inset 0 0 30px rgba(255,23,68,0.05); }
+.card.danger:hover { box-shadow: 0 4px 25px rgba(255,23,68,0.2); }
+.card h3 { font-size: 0.95rem; font-weight: 700; color: #ffffff; margin-bottom: 4px; }
+.card h3.warn { color: #ffea00; text-shadow: 0 0 10px rgba(255,234,0,0.3); }
+.card h3.alert { color: #ff1744; text-shadow: 0 0 10px rgba(255,23,68,0.3); }
+.card .desc { font-size: 0.76rem; color: #8090b0; margin-bottom: 14px; line-height: 1.4; }
+.card .cw { position: relative; width: 100%; }
+
+/* ===== CALLOUT ===== */
+.callout {
+  margin: 0 40px 20px; padding: 18px 24px;
+  background: linear-gradient(145deg, #1a1800, #201c05);
+  border: 1px solid #665500; border-left: 5px solid #ffea00;
+  border-radius: 10px; font-size: 0.86rem; color: #fff8c5; line-height: 1.6;
+  box-shadow: inset 0 0 40px rgba(255,234,0,0.03), 0 2px 15px rgba(0,0,0,0.3);
+}
+.callout strong { color: #ffea00; text-shadow: 0 0 8px rgba(255,234,0,0.4); }
+
+/* ===== SECTION HEADER ===== */
+.sec-head { padding: 30px 40px 14px; }
+.sec-head h2 {
+  font-size: 1.3rem; font-weight: 900;
+  background: linear-gradient(90deg, var(--blue), var(--purple));
+  -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+}
+.sec-head p { font-size: 0.8rem; color: #b0b8d0; margin-top: 5px; max-width: 900px; }
+
+/* ===== TIMELINE ===== */
+.tl-wrap { padding: 20px 40px 40px; }
+.tl { position: relative; padding-left: 32px; }
+.tl::before { content: ''; position: absolute; left: 7px; top: 0; bottom: 0; width: 3px; background: linear-gradient(to bottom, #0088ff, #d500f9, #ff6d00, #ff1744); box-shadow: 0 0 10px rgba(0,136,255,0.3); }
+.tl-item { position: relative; margin-bottom: 16px; padding: 14px 18px; background: var(--bg-card); border: 1px solid var(--border-card); border-radius: 10px; transition: all 0.3s ease; }
+.tl-item:hover { border-color: #0088ff; box-shadow: 0 4px 20px rgba(0,100,255,0.15); transform: translateX(4px); }
+.tl-item::before { content: ''; position: absolute; left: -29px; top: 18px; width: 12px; height: 12px; border-radius: 50%; background: #0088ff; border: 2px solid var(--bg-primary); box-shadow: 0 0 10px rgba(0,136,255,0.6); }
+.tl-item.era-red::before { background: #ff1744; box-shadow: 0 0 10px rgba(255,23,68,0.6); }
+.tl-item.era-green::before { background: #00e676; box-shadow: 0 0 10px rgba(0,230,118,0.6); }
+.tl-item.era-yellow::before { background: #ffea00; box-shadow: 0 0 10px rgba(255,234,0,0.6); }
+.tl-item.era-purple::before { background: #d500f9; box-shadow: 0 0 10px rgba(213,0,249,0.6); }
+.tl-yr { font-size: 0.72rem; font-weight: 800; color: #0088ff; text-transform: uppercase; letter-spacing: 1.2px; margin-bottom: 4px; }
+.tl-item.era-red .tl-yr { color: #ff1744; }
+.tl-item.era-yellow .tl-yr { color: #ffea00; }
+.tl-item.era-purple .tl-yr { color: #d500f9; }
+.tl-txt { font-size: 0.84rem; color: #d0d8f0; line-height: 1.55; }
+
+/* ===== SOURCES ===== */
+.sources { padding: 0 40px 40px; font-size: 0.68rem; color: #475569; line-height: 1.5; }
+
+/* ===== RESPONSIVE ===== */
+@media (max-width: 900px) {
+  .grid { grid-template-columns: 1fr; padding: 16px 16px 24px; }
+  .hero, .kpi-strip, .sec-head, .tl-wrap, .sources { padding-left: 16px; padding-right: 16px; }
+  .callout { margin-left: 16px; margin-right: 16px; }
+  .kpi-strip { grid-template-columns: repeat(auto-fit, minmax(140px, 1fr)); }
+  .hero h1 { font-size: 1.2rem; }
+  .tab-btn { padding: 8px 14px; font-size: 0.7rem; }
+}
+</style>
+</head>
+<body>
+
+<!-- ===== STICKY HERO + TABS ===== -->
+<div class="hero">
+  <div class="hero-inner">
+    <h1>U.S. &rarr; India: The Great Offshoring (2000&ndash;2025)</h1>
+    <p class="tagline">Interactive analysis of H-1B visa usage, outsourcing trends, and labor market impact &mdash; from official USCIS, DOL, and BLS data.</p>
+    <p class="anchor">&#9650; Anchored to Year 2000: peak U.S. labor force participation (67.3%)</p>
+    <nav class="tab-nav" role="tablist">
+      <button class="tab-btn active" data-tab="overview" role="tab">Overview</button>
+      <button class="tab-btn" data-tab="h1b" role="tab">H-1B Visas</button>
+      <button class="tab-btn" data-tab="national" role="tab">50-State Data</button>
+      <button class="tab-btn" data-tab="massachusetts" role="tab">Massachusetts</button>
+      <button class="tab-btn" data-tab="jobs" role="tab">Real Jobs &amp; Wages</button>
+      <button class="tab-btn" data-tab="exposure" role="tab">Questionable Usage</button>
+      <button class="tab-btn" data-tab="pipeline" role="tab">The Pipeline</button>
+      <button class="tab-btn" data-tab="law" role="tab">The Law</button>
+      <button class="tab-btn" data-tab="ai" role="tab">The AI Era</button>
+      <button class="tab-btn" data-tab="timeline" role="tab">Sources</button>
+    </nav>
+  </div>
+</div>
+
+<!-- ======================= TAB 1: OVERVIEW ======================= -->
+<div class="tab-panel active" id="panel-overview">
+  <div class="kpi-strip">
+    <div class="kpi"><div class="kpi-val y">67.3% &rarr; 62.4%</div><div class="kpi-lbl">U.S. Labor Participation<br>2000 vs 2025</div></div>
+    <div class="kpi"><div class="kpi-val r">&minus;4.5M</div><div class="kpi-lbl">U.S. Manufacturing<br>Jobs Lost Since 2000</div></div>
+    <div class="kpi"><div class="kpi-val b">4,776,184</div><div class="kpi-lbl">Total H-1B Approvals<br>National (FY09&ndash;26)</div></div>
+    <div class="kpi"><div class="kpi-val g">1,800+</div><div class="kpi-lbl">Global Capability<br>Centers in India</div></div>
+    <div class="kpi"><div class="kpi-val p">1.9M</div><div class="kpi-lbl">India GCC<br>Workforce (2025)</div></div>
+    <div class="kpi"><div class="kpi-val o">$300B</div><div class="kpi-lbl">India IT Industry<br>Revenue FY2026</div></div>
+  </div>
+  <div class="grid">
+    <div class="card wide"><h3>The 2000 Turning Point: Labor Force Participation &amp; Manufacturing</h3><p class="desc">Both peaked around 2000 and never recovered. The participation rate fell 5 points &mdash; millions left the workforce. Source: BLS, FRED.</p><div class="cw"><canvas id="c_participation"></canvas></div></div>
+    <div class="card wide"><h3>The Great Crossover: U.S. Manufacturing Jobs vs. India IT Revenue</h3><p class="desc">As U.S. manufacturing shed millions of jobs, India's IT industry grew from $6B to $300B. Sources: BLS/FRED, NASSCOM.</p><div class="cw"><canvas id="c_crossover"></canvas></div></div>
+    <div class="card"><h3>India IT-BPO Revenue Growth</h3><p class="desc">USD billions. Source: NASSCOM.</p><div class="cw"><canvas id="c_revenue"></canvas></div></div>
+    <div class="card"><h3>Global Capability Centers in India</h3><p class="desc">GCC count and employees. Source: NASSCOM, Zinnov.</p><div class="cw"><canvas id="c_gcc"></canvas></div></div>
+    <div class="card"><h3>Where U.S. Companies Outsource</h3><p class="desc">India holds 55% of the global outsourcing market.</p><div class="cw"><canvas id="c_share"></canvas></div></div>
+    <div class="card wide"><h3>U.S. Companies: India Headcount (2025)</h3><p class="desc">Estimated employees in India. <span style="color:#ff6d00;font-weight:700;">&#9632; Orange = Indian-HQ IT firms</span> &nbsp;|&nbsp; <span style="color:#0088ff;font-weight:700;">&#9632; Blue = U.S.-HQ companies</span>. Sources: NASSCOM, company annual reports, press estimates.</p><div class="cw" style="height:420px"><canvas id="c_company"></canvas></div></div>
+    <div class="card wide"><h3>Evolution of Offshored Work: 2000 vs. 2025</h3><p class="desc">Early 2000s = call centers. Today = engineering, finance, legal, AI.</p><div class="cw"><canvas id="c_sector"></canvas></div></div>
+  </div>
+  <div class="callout"><strong>Why 2000 matters:</strong> The U.S. civilian labor force participation rate hit 67.3% in April 2000 &mdash; the highest in history. By 2026 it stood at 62.0%. That 5.3-point drop represents ~13 million fewer working-age Americans in the labor force. The timing correlates directly with the acceleration of outsourcing to India and H-1B usage by Indian IT firms.</div>
+</div>
+
+<!-- ======================= TAB 2: H-1B VISAS ======================= -->
+<div class="tab-panel" id="panel-h1b">
+  <div class="kpi-strip">
+    <div class="kpi"><div class="kpi-val b">719,696</div><div class="kpi-lbl">Indian IT Firms Alone<br>(Top 100, USCIS)</div></div>
+    <div class="kpi"><div class="kpi-val o">39.7%</div><div class="kpi-lbl">Indian IT Share<br>of Top 100 Employers</div></div>
+    <div class="kpi"><div class="kpi-val r">80%</div><div class="kpi-lbl">Peak India Share<br>of H-1B (FY2016)</div></div>
+    <div class="kpi"><div class="kpi-val g">207,652</div><div class="kpi-lbl">Cognizant Alone<br>(4 Entity Names)</div></div>
+  </div>
+  <div class="grid">
+    <div class="card wide"><h3>H-1B Approvals: Total vs. India-Born</h3><p class="desc">India's share grew from ~40% (2001) to ~75% by 2020, peaking at ~80% in 2016. Source: USCIS, DHS.</p><div class="cw"><canvas id="c_h1b"></canvas></div></div>
+    <div class="card wide"><h3>Top 20 H-1B Employers: Cumulative Approvals (USCIS)</h3><p class="desc">Orange = Indian-HQ IT firms. Source: USCIS H-1B Employer Data Hub.</p><div class="cw" style="height:480px"><canvas id="c_h1bEmployer"></canvas></div></div>
+    <div class="card"><h3>Indian IT Share of Top 100</h3><p class="desc">39.7% of all cumulative approvals among top 100.</p><div class="cw"><canvas id="c_h1bShare"></canvas></div></div>
+    <div class="card wide"><h3>Indian IT Firms Breakdown: Cumulative H-1B Approvals by Parent Company</h3><p class="desc">Cognizant leads with 207,652 cumulative approvals (FY2009&ndash;2026). These 10 Indian-HQ IT firms alone account for 719,696 approvals &mdash; 39.7% of the top 100 employers. Many operate multiple U.S. entities. Source: USCIS H-1B Employer Data Hub.</p><div class="cw" style="height:420px"><canvas id="c_indianFirms"></canvas></div></div>
+  </div>
+</div>
+
+<!-- ======================= TAB 3: 50-STATE DATA ======================= -->
+<div class="tab-panel" id="panel-national">
+  <div class="kpi-strip">
+    <div class="kpi"><div class="kpi-val b">4,776,184</div><div class="kpi-lbl">Total Approvals<br>National (FY09&ndash;26)</div></div>
+    <div class="kpi"><div class="kpi-val r">326,945</div><div class="kpi-lbl">Total Denials<br>(6.4% rate)</div></div>
+    <div class="kpi"><div class="kpi-val y">844,054</div><div class="kpi-lbl">Individual Filings<br>Analyzed</div></div>
+    <div class="kpi"><div class="kpi-val g">50+</div><div class="kpi-lbl">States &amp; Territories<br>Covered</div></div>
+  </div>
+  <!-- STATE SEARCH -->
+  <div style="padding:16px 40px 0;display:flex;gap:12px;align-items:center;flex-wrap:wrap;">
+    <input id="stateSearch" type="text" placeholder="Search any state (e.g. TX, Florida, Ohio)..." style="flex:1;min-width:250px;padding:12px 18px;background:#0a0a2a;border:2px solid #1a1a55;border-radius:10px;color:#fff;font-size:0.9rem;outline:none;transition:border-color 0.3s;" onfocus="this.style.borderColor='#0088ff'" onblur="this.style.borderColor='#1a1a55'">
+    <span id="stateResult" style="font-size:0.8rem;color:#8090b0;"></span>
+  </div>
+  <div id="stateCard" style="display:none;margin:12px 40px 0;padding:20px 24px;background:linear-gradient(145deg,#0d0d25,#12123a);border:2px solid #0066ff;border-radius:12px;box-shadow:0 0 30px rgba(0,100,255,0.15);">
+    <div id="stateCardContent" style="display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:14px;"></div>
+  </div>
+
+
+  <div class="grid">
+    <div class="card wide"><h3>H-1B Approvals by State: Top 15</h3><p class="desc">Texas leads (755K), NJ second (651K). CA excluded (incomplete download). Source: USCIS H-1B Employer Data Hub, 844,054 filings FY2009&ndash;2026.</p><div class="cw"><canvas id="c_natState"></canvas></div></div>
+    <div class="card wide"><h3>National H-1B Approvals &amp; Denials by Fiscal Year</h3><p class="desc">Denials spiked to 61K under Trump-era scrutiny (FY2019), then collapsed to 7K by FY2024. Source: USCIS H-1B Employer Data Hub.</p><div class="cw"><canvas id="c_natFY"></canvas></div></div>
+  </div>
+  <div class="sources"><strong>Source:</strong> USCIS H-1B Employer Data Hub &bull; 844,054 individual employer filings across all 50 states + territories &bull; FY2009&ndash;2026 &bull; CA data partially incomplete.</div>
+</div>
+
+<!-- ======================= TAB 4: MASSACHUSETTS ======================= -->
+<div class="tab-panel" id="panel-massachusetts">
+  <div class="kpi-strip">
+    <div class="kpi"><div class="kpi-val b">245,552</div><div class="kpi-lbl">Total Approvals<br>MA (FY09&ndash;26)</div></div>
+    <div class="kpi"><div class="kpi-val r">13,288</div><div class="kpi-lbl">Total Denials</div></div>
+    <div class="kpi"><div class="kpi-val g">16,544</div><div class="kpi-lbl">Unique Employers<br>Filing in MA</div></div>
+    <div class="kpi"><div class="kpi-val y">46.9%</div><div class="kpi-lbl">Professional/Scientific<br>Services Share</div></div>
+    <div class="kpi"><div class="kpi-val p">89,305</div><div class="kpi-lbl">Boston Alone<br>(36% of MA)</div></div>
+  </div>
+  <div class="grid">
+    <div class="card wide"><h3>MA Approvals &amp; Denials by Fiscal Year</h3><p class="desc">Peaked at 19,932 (FY2019). Denials spiked during "Buy American, Hire American." Source: USCIS.</p><div class="cw"><canvas id="c_maYear"></canvas></div></div>
+    <div class="card"><h3>MA Approvals by Industry</h3><p class="desc">Professional services dominates at 115K. Source: USCIS.</p><div class="cw"><canvas id="c_maIndustry"></canvas></div></div>
+    <div class="card wide"><h3>Top 15 MA Cities by H-1B Approvals</h3><p class="desc">Boston alone accounts for 89,305 approvals (36.4% of MA total). Cambridge second at 27,399. Source: USCIS H-1B Employer Data Hub.</p><div class="cw" style="height:520px"><canvas id="c_maCity"></canvas></div></div>
+    <div class="card wide"><h3>Top 20 MA Employers (FY2009&ndash;2026)</h3><p class="desc"><span style="color:#ff6d00;font-weight:700;">&#9632; Orange = IT outsourcing/staffing firms</span> (place workers at client sites) &nbsp;|&nbsp; <span style="color:#0088ff;font-weight:700;">&#9632; Blue = Direct employers</span> (hire for their own workforce). Source: USCIS H-1B Employer Data Hub.</p><div class="cw" style="height:480px"><canvas id="c_maEmployer"></canvas></div></div>
+    <div class="card wide"><h3>Outsourcing Share Over Time</h3><p class="desc">Peaked at 28.5% (FY2019), declined to ~10% after scrutiny.</p><div class="cw"><canvas id="c_maOutsource"></canvas></div></div>
+    <div class="card wide"><h3>Approval Types Over Time</h3><p class="desc">"Change of Employer" tripled from FY09 to FY22.</p><div class="cw"><canvas id="c_maType"></canvas></div></div>
+    <div class="card wide"><h3>Professional &amp; Scientific Services Trend (Consulting, Tech, R&amp;D)</h3><p class="desc">NAICS Code 54 &mdash; includes software consulting, management consulting, R&amp;D, accounting, and architecture firms. This is MA&rsquo;s dominant H-1B industry at 46.9% of all approvals. Peaked at 10,159 (FY2019). Source: USCIS.</p><div class="cw"><canvas id="c_maProf"></canvas></div></div>
+  </div>
+</div>
+
+<!-- ======================= TAB 5: REAL JOBS & WAGES ======================= -->
+<div class="tab-panel" id="panel-jobs">
+  <div class="sec-head">
+    <h2 style="background: linear-gradient(90deg, #ff1744, #ffea00); -webkit-background-clip: text; -webkit-text-fill-color: transparent;">The Missing Piece: Actual Job Titles &amp; Wages</h2>
+    <p>USCIS shows <em>who</em> petitions. The DOL's LCA data reveals <em>what jobs</em> and <em>what wages</em>. 7,629 MA applications analyzed (FY2020 &amp; FY2024). Source: DOL Foreign Labor Certification LCA Disclosure Data.</p>
+  </div>
+  <div class="kpi-strip">
+    <div class="kpi"><div class="kpi-val y">18.9%</div><div class="kpi-lbl">Entry-Level (I)<br>Wage Positions</div></div>
+    <div class="kpi"><div class="kpi-val r">141</div><div class="kpi-lbl">Human Services<br>H-1B Applications</div></div>
+    <div class="kpi"><div class="kpi-val r">$32,932</div><div class="kpi-lbl">Avg Wage: Direct Care<br>Professionals</div></div>
+    <div class="kpi"><div class="kpi-val b">180</div><div class="kpi-lbl">Jobs Under<br>$50K/Year</div></div>
+    <div class="kpi"><div class="kpi-val g">7,629</div><div class="kpi-lbl">MA LCA Records<br>Analyzed</div></div>
+    <div class="kpi"><div class="kpi-val o">$29,000</div><div class="kpi-lbl">Lowest H-1B Salary<br>Preschool Teacher</div></div>
+  </div>
+  <div class="grid">
+    <div class="card danger"><h3 class="alert">Prevailing Wage Level Distribution</h3><p class="desc">Level I = entry (lowest 17th percentile). Nearly 1 in 5 MA H-1B positions are entry-level &mdash; paying 36% below median. Source: DOL LCA Disclosure Data.</p><div class="cw"><canvas id="c_lcaWage"></canvas></div></div>
+    <div class="card wide danger"><h3 class="alert">Human Services Job Titles &amp; Average Wages: Massachusetts</h3><p class="desc">Direct Care Professionals average $32,932/year. Youth Development Pros at $37,226. All well below MA median ($45K). These are H-1B &ldquo;specialty occupations.&rdquo; Source: DOL LCA.</p><div class="cw" style="height:480px"><canvas id="c_lcaHS"></canvas></div></div>
+    <div class="card wide danger"><h3 class="alert">The 20 Lowest-Paid H-1B Jobs: Massachusetts</h3><p class="desc">Real DOL filings: preschool teachers at $29K, direct care workers at $30K, youth workers at $35K. All Wage Level I. The H-1B visa requires a &ldquo;specialty occupation&rdquo; &mdash; a bachelor&rsquo;s degree minimum. Source: DOL LCA Disclosure Data FY2020 &amp; FY2024.</p><div class="cw" style="height:600px"><canvas id="c_lcaLow"></canvas></div></div>
+    <div class="card wide danger"><h3 class="alert">Top Human Services Employers Using H-1B: Massachusetts</h3><p class="desc">Devereux Foundation: 31 LCA applications for &ldquo;Direct Care Professional&rdquo; at $30&ndash;38K/year. Gandara Mental Health: 21 apps. Wayside Youth: 13 apps. These organizations serve vulnerable children, disabled adults, and people with mental health needs. Source: DOL LCA Disclosure Data.</p><div class="cw" style="height:520px"><canvas id="c_lcaEmp"></canvas></div></div>
+  </div>
+  <div class="sources"><strong>Source:</strong> U.S. Department of Labor &bull; Foreign Labor Certification LCA Disclosure Data &bull; FY2020 Q1 &amp; FY2024 Q1 &bull; 7,629 Massachusetts applications analyzed &bull; Wage data converted to annual equivalents where filed hourly.</div>
+</div>
+
+<!-- ======================= TAB 6: QUESTIONABLE USAGE ======================= -->
+<div class="tab-panel" id="panel-exposure">
+  <div class="sec-head">
+    <h2 style="background: linear-gradient(90deg, #ffea00, #ff6d00, #ff1744); -webkit-background-clip: text; -webkit-text-fill-color: transparent;">Questionable H-1B Usage: Jobs Americans Could Fill</h2>
+    <p>IT outsourcing firms, hotel chains, pizza shops, landscapers, and human services orgs &mdash; all using a visa meant for &ldquo;specialty occupations.&rdquo; Sources: USCIS H-1B Employer Data Hub (844,054 filings, all 50 states).</p>
+  </div>
+  <div class="kpi-strip">
+    <div class="kpi"><div class="kpi-val o">576,625</div><div class="kpi-lbl">Outsourcing Firm<br>Approvals (National)</div></div>
+    <div class="kpi"><div class="kpi-val r">7,421</div><div class="kpi-lbl">MA Low-Skill Industry<br>Approvals</div></div>
+    <div class="kpi"><div class="kpi-val y">22,513</div><div class="kpi-lbl">MA Healthcare/Social<br>Assistance (NAICS 62)</div></div>
+    <div class="kpi"><div class="kpi-val r">6.6%</div><div class="kpi-lbl">Outsourcing Denial Rate<br>(MA, vs 5.1% Direct)</div></div>
+    <div class="kpi"><div class="kpi-val p">36,266</div><div class="kpi-lbl">MA IT Outsourcing<br>Approvals (14.8%)</div></div>
+    <div class="kpi"><div class="kpi-val r">$34M</div><div class="kpi-lbl">Infosys Fraud<br>Fine (ICE Record)</div></div>
+    <div class="kpi"><div class="kpi-val y">408,891</div><div class="kpi-lbl">Duplicate Lottery<br>Registrations (FY24)</div></div>
+  </div>
+
+  <div class="callout" style="border-left-color: #ff1744; background: linear-gradient(145deg, #1a0005, #200008); border-color: #660011; color: #ffb0b8;">
+    <strong style="color: #ff1744;">The Question:</strong> The H-1B visa legally requires a &ldquo;specialty occupation&rdquo; &mdash; defined as one requiring a bachelor&rsquo;s degree in a specific field. Direct Care Professionals ($30K), preschool teachers ($29K), pizza shop managers, hotel staff, and landscapers all received H-1B approvals. <strong style="color:#ffea00;">Infosys paid a record $34 million fine</strong> for systemic visa fraud (ICE). <strong style="color:#ffea00;">Cognizant was found liable</strong> for intentional discrimination against non-Indian employees (2024 federal jury verdict). In FY2024, <strong style="color:#ffea00;">408,891 duplicate lottery registrations</strong> were filed &mdash; one individual had 83 fraudulent entries. The DOL launched <strong style="color:#ffea00;">Project Firewall</strong> with 175+ active H-1B investigations. India&rsquo;s government hired <strong style="color:#ffea00;">Jason Miller (SHW Partners)</strong> as its U.S. lobbyist for $1.8M/year (May 2025). Sources: ICE, DOL, USCIS, Business Standard.
+  </div>
+
+  <div class="grid">
+    <div class="card alert"><h3 class="warn">National: Questionable Usage Breakdown</h3><p class="desc">Of 4.78M total H-1B approvals nationally, 576,625 went to IT outsourcing/staffing firms (12.1%), 6,894 to low-skill industries (retail, food, hotels), and 6,574 to human services orgs. &ldquo;Questionable&rdquo; = jobs that arguably don&rsquo;t meet the H-1B &ldquo;specialty occupation&rdquo; threshold. Source: USCIS, 844K filings.</p><div class="cw"><canvas id="c_natQ"></canvas></div></div>
+    <div class="card wide alert"><h3 class="warn">National: Top Human Services &amp; Low-Skill Employers</h3><p class="desc">Devereux Foundation (1,229 approvals), Choice Hotels (431), Cincinnati Children&rsquo;s (393), Domino&rsquo;s Pizza (296). Source: USCIS.</p><div class="cw" style="height:480px"><canvas id="c_natHSLS"></canvas></div></div>
+
+    <div class="card danger"><h3 class="alert">MA Detailed Breakdown: Where Do the Approvals Actually Go?</h3><p class="desc">14.8% to IT outsourcing/staffing, 9.2% to healthcare/social assistance (NAICS 62), 3.0% to low-skill industries (retail, food, hospitality, arts). 73% to direct employers. Source: USCIS.</p><div class="cw"><canvas id="c_maQ"></canvas></div></div>
+
+    <div class="card danger"><h3 class="alert">MA: Denial Rates by Category</h3><p class="desc">USCIS&rsquo;s own adjudicators deny outsourcers at higher rates than direct employers. Higher denial = weaker petition quality. Source: USCIS.</p><div class="cw"><canvas id="c_maDenial"></canvas></div></div>
+    <div class="card danger"><h3 class="alert">MA: Industry Breakdown (NAICS Codes)</h3><p class="desc">Professional/Scientific Services (46.9%) dominates, but Retail (2.3%), Accommodation/Food (0.2%), Arts (0.1%) are all present. Source: USCIS.</p><div class="cw"><canvas id="c_maNaics"></canvas></div></div>
+
+    <div class="card wide danger"><h3 class="alert">MA: IT Outsourcing Firms &mdash; Named Employers &amp; Approvals</h3><p class="desc">These firms place H-1B workers at client sites rather than using them internally. Virtusa alone: 7,506 approvals. Randstad&rsquo;s 3 entities combined = 9,497 approvals. Source: USCIS H-1B Employer Data Hub.</p><div class="cw" style="height:420px"><canvas id="c_maQOutsource"></canvas></div></div>
+    <div class="card wide danger"><h3 class="alert">MA: Human Services Orgs Using H-1B &mdash; Named Employers</h3><p class="desc">Devereux Foundation leads with 575 approvals for roles like &ldquo;Direct Care Professional&rdquo; at $30K/year. Boston Higashi School (295), Hillcrest Educational (222), Gandara Mental Health (195). Source: USCIS.</p><div class="cw" style="height:520px"><canvas id="c_maQHuman"></canvas></div></div>
+    <div class="card wide danger"><h3 class="alert">MA: Low-Skill Industry Employers &mdash; Retail, Hotels, Restaurants, Landscapers</h3><p class="desc">Wayfair (2,531), Staples (1,709), TJX (377), BJ&rsquo;s (313), Dunkin&rsquo; (40 + corp IT), DraftKings (68). All NAICS codes 44-45, 71, 72, 81. Source: USCIS.</p><div class="cw" style="height:520px"><canvas id="c_maQLowSkill"></canvas></div></div>
+
+    <div class="card wide danger" style="border-color:#cc5500;"><h3 class="alert" style="font-size:1.1rem;">Case Study: Dunkin&rsquo; Brands &mdash; H-1B Visas at a Donut Chain</h3><p class="desc">Dunkin&rsquo; Brands Inc (Canton, MA) received <strong style="color:#ff1744;">74 H-1B approvals</strong> at the corporate level. Only <strong style="color:#0088ff;">6 were &ldquo;New Employment&rdquo;</strong> (actually sponsoring someone). <strong style="color:#d500f9;">42 were &ldquo;Change of Employer&rdquo;</strong> (57%) &mdash; meaning Dunkin&rsquo; poached workers from the existing H-1B pool. An additional 16 franchise-owned Dunkin&rsquo; locations across GA, IL, NJ, NY, and PA filed 21 more H-1B petitions for local donut shops. The H-1B visa requires a &ldquo;specialty occupation&rdquo; demanding a bachelor&rsquo;s degree minimum. Source: USCIS H-1B Employer Data Hub.</p><div class="cw" style="height:320px"><canvas id="c_dunkin"></canvas></div></div>
+
+    <div class="card wide danger" style="border-color:#cc5500;"><h3 class="alert" style="font-size:1.1rem;">Household Brands Using H-1B: Fast Food, Hotels &amp; Coffee Chains</h3><p class="desc">Starbucks: 1,485 approvals (34% Change of Employer). Marriott: 771. Hilton: 661. McDonald&rsquo;s: 323 (48% CE &mdash; nearly half were poached from the H-1B pool). Domino&rsquo;s Pizza: 443. These are not &ldquo;specialty occupations&rdquo; in any traditional sense. Many of these companies have corporate IT departments, but the volume and CE% suggest systematic H-1B labor pool recruitment. Source: USCIS H-1B Employer Data Hub, 844,054 filings.</p><div class="cw" style="height:520px"><canvas id="c_brands"></canvas></div></div>
+  </div>
+  <div class="sources"><strong>Sources:</strong> USCIS H-1B Employer Data Hub &bull; 844,054 filings, all 50 states + territories &bull; FY2009&ndash;2026 &bull; Industry codes from NAICS classification &bull; Outsourcing firm identification based on known staffing/consulting firm names.</div>
+</div>
+
+<!-- ======================= TAB 7: THE PIPELINE ======================= -->
+<div class="tab-panel" id="panel-pipeline">
+  <div class="sec-head">
+    <h2 style="background: linear-gradient(90deg, #ff6d00, #ff1744, #d500f9); -webkit-background-clip: text; -webkit-text-fill-color: transparent;">The Pipeline: How H-1B Workers Get Recycled</h2>
+    <p>Indian IT outsourcing firms bring workers into the U.S., then American companies poach them via &ldquo;Change of Employer&rdquo; filings. The worker never leaves. No new visa slot is consumed. A captive secondary labor market operates inside the visa system.</p>
+  </div>
+  <div class="kpi-strip">
+    <div class="kpi"><div class="kpi-val o">797,541</div><div class="kpi-lbl">&ldquo;Change of Employer&rdquo;<br>Approvals Nationally</div></div>
+    <div class="kpi"><div class="kpi-val r">16.7%</div><div class="kpi-lbl">Of All H-1B Approvals<br>Are Worker Transfers</div></div>
+    <div class="kpi"><div class="kpi-val y">25.9%</div><div class="kpi-lbl">Peak CE Share<br>(FY2022)</div></div>
+    <div class="kpi"><div class="kpi-val p">50,729</div><div class="kpi-lbl">MA &ldquo;Change of Employer&rdquo;<br>(20.7% of MA Total)</div></div>
+    <div class="kpi"><div class="kpi-val b">34.5%</div><div class="kpi-lbl">Actually &ldquo;New Employment&rdquo;<br>Bringing People In</div></div>
+  </div>
+  <div class="callout" style="border-left-color: #ff6d00; background: linear-gradient(145deg, #1a0d00, #201200); border-color: #663300; color: #ffd8a0;">
+    <strong style="color: #ff6d00;">The Paradigm:</strong> Only 34.5% of H-1B approvals are &ldquo;New Employment&rdquo; &mdash; actually sponsoring someone from abroad. Another 16.7% (797,541) are &ldquo;Change of Employer&rdquo; &mdash; companies recruiting from a pre-built pool of workers already here on H-1B, who will accept any terms because losing their job means deportation. Add in Continuations (26.9%) and Amendments (15.0%), and 65.5% of the entire H-1B system is recycling existing workers &mdash; not bringing in new talent.
+  </div>
+  <div class="grid">
+    <div class="card"><h3>National: Where Do H-1B Approvals Actually Go?</h3><p class="desc">Only 1 in 3 H-1B approvals brings a new worker to the U.S. The rest recycle, extend, or transfer existing workers. Source: USCIS (844K filings).</p><div class="cw"><canvas id="c_pipeCat"></canvas></div></div>
+    <div class="card"><h3>The Recycling Machine: New vs. Transferred</h3><p class="desc">New Employment (someone comes from abroad) vs. Change of Employer (poached from existing H-1B pool). Source: USCIS.</p><div class="cw"><canvas id="c_pipeNvC"></canvas></div></div>
+    <div class="card wide"><h3>The Trend: &ldquo;Change of Employer&rdquo; Share Over Time</h3><p class="desc">CE share nearly doubled from 13.7% (FY2009) to 25.9% (FY2022). The pipeline is growing. Source: USCIS H-1B Employer Data Hub.</p><div class="cw"><canvas id="c_pipeTrend"></canvas></div></div>
+    <div class="card wide danger"><h3 class="alert">Top &ldquo;Recyclers&rdquo;: Companies That Recruit From the H-1B Pool</h3><p class="desc">Ranked by % of approvals that are &ldquo;Change of Employer.&rdquo; These companies rarely sponsor new workers &mdash; they poach from the captive pool. Minimum 1,000 total approvals. Source: USCIS.</p><div class="cw" style="height:520px"><canvas id="c_pipeRecyclers"></canvas></div></div>
+    <div class="card wide danger"><h3 class="alert">Massachusetts: Top Companies Drawing From the Pipeline</h3><p class="desc">Fidelity: 3,761 CE approvals (39.7%). Randstad entities combined: 4,409 CE (47.0%). These firms built their MA workforce from the existing H-1B pool. Source: USCIS.</p><div class="cw" style="height:480px"><canvas id="c_pipeMA"></canvas></div></div>
+  </div>
+</div>
+
+<!-- ======================= TAB 8: THE LAW ======================= -->
+<div class="tab-panel" id="panel-law">
+  <div class="sec-head">
+    <h2 style="background: linear-gradient(90deg, #d500f9, #0088ff, #ff1744); -webkit-background-clip: text; -webkit-text-fill-color: transparent;">The Law: 36 Years of H-1B Legislation &amp; Its Impact on American Workers</h2>
+    <p>From creation in 1990 to the $100K fee in 2025 &mdash; every major piece of legislation, who it helped, and what it cost the American workforce. Sources: Congress.gov, USCIS, DOL, EPI, NBER.</p>
+  </div>
+  <div class="kpi-strip">
+    <div class="kpi"><div class="kpi-val p">1990</div><div class="kpi-lbl">H-1B Created<br>Immigration Act</div></div>
+    <div class="kpi"><div class="kpi-val b">65K &rarr; 195K &rarr; 65K</div><div class="kpi-lbl">Visa Cap<br>Rollercoaster</div></div>
+    <div class="kpi"><div class="kpi-val r">&minus;36%</div><div class="kpi-lbl">Wage Discount<br>Level I vs Median</div></div>
+    <div class="kpi"><div class="kpi-val g">$100,000</div><div class="kpi-lbl">New Filing Fee<br>(2025, 20&ndash;50x Increase)</div></div>
+    <div class="kpi"><div class="kpi-val y">71%</div><div class="kpi-lbl">India&rsquo;s Share<br>of H-1B (FY2024)</div></div>
+  </div>
+
+  <div class="callout" style="border-left-color: #d500f9; background: linear-gradient(145deg, #150020, #1a0030); border-color: #550088; color: #e8b0ff;">
+    <strong style="color: #d500f9;">The 36-Year Story:</strong> Congress created H-1B in 1990 for &ldquo;specialty occupations.&rdquo; By 2000, Indian IT firms discovered how to turn it into a labor pipeline. The cap was tripled, portability made workers transferable, and a body-shopping industry was born. Today, 60% of H-1B positions pay below-median wages, and research shows it depressed American CS wages by up to 5.1% and employment by up to 10.8%.
+  </div>
+
+  <div class="grid">
+    <div class="card wide"><h3>H-1B Visa Cap: The Legislative Rollercoaster (1990&ndash;2026)</h3><p class="desc">Congress tripled the cap during the dot-com boom, then slashed it back. The base cap hasn&rsquo;t changed in 22 years &mdash; but exemptions expanded. Source: Congress.gov, USCIS.</p><div class="cw"><canvas id="c_lawCap"></canvas></div></div>
+    <div class="card wide danger"><h3 class="alert">The Fee Explosion: Cost Per H-1B Petition Over Time</h3><p class="desc">From $0 in 1990 to $100,000 in 2025. The most dramatic change in program history &mdash; a 20&ndash;50x increase overnight. Source: USCIS, Federal Register.</p><div class="cw" style="height:320px"><canvas id="c_lawFee"></canvas></div></div>
+    <div class="card danger"><h3 class="alert">Wage Suppression: H-1B vs. Market Rates</h3><p class="desc">DOL sets 4 prevailing wage levels by percentile: Level I = 17th percentile, Level II = 34th, Level III = 50th (median), Level IV = 67th. <strong style="color:#ff1744;">60% of H-1B positions are Level I or II &mdash; below the median wage.</strong> Level I pays 36% less than the local median for the same occupation. Math: if median software dev salary = $120K, Level I = $76,800 (17th pct). Source: DOL OES, EPI &ldquo;H-1B Visas and Prevailing Wage Levels&rdquo; (2020).</p><div class="cw"><canvas id="c_lawWage"></canvas></div></div>
+    <div class="card"><h3>India&rsquo;s Growing Dominance of H-1B</h3><p class="desc">From ~40% (2001) to 71% (2024). Indian IT outsourcing firms engineered the program. Source: USCIS, DHS.</p><div class="cw"><canvas id="c_lawIndia"></canvas></div></div>
+    <div class="card danger"><h3 class="alert">The Research: What H-1B Did to American Workers</h3><p class="desc"><strong style="color:#ff1744;">NBER Working Paper #23153 (Bound et al., 2017):</strong> Modeling a counterfactual U.S. without H-1B, American CS wages would be 2.6&ndash;5.1% higher and CS employment 6.1&ndash;10.8% higher. In dollar terms: if avg CS salary = $110K, that&rsquo;s $2,860&ndash;$5,610 less per worker per year. Across ~4.4M U.S. CS workers = $12.6B&ndash;$24.7B in annual wage suppression. <strong style="color:#ff6d00;">EPI (2020):</strong> H-1B holders earn 5&ndash;10% less than comparable Americans in the same occupation and region. <strong style="color:#d500f9;">Deloitte (2023):</strong> 83% of H-1B-dependent firms report using the visa primarily for cost savings.</p><div class="cw" style="height:320px"><canvas id="c_lawImpact"></canvas></div></div>
+  </div>
+
+  <div class="sec-head"><h2 style="background: linear-gradient(90deg, #d500f9, #ff1744); -webkit-background-clip: text; -webkit-text-fill-color: transparent;">Legislative Timeline: Every Major H-1B Law</h2></div>
+  <div class="tl-wrap">
+    <div class="tl">
+      <div class="tl-item era-green"><div class="tl-yr">1990 &mdash; Creation (Bush Sr.)</div><div class="tl-txt"><strong>Immigration Act of 1990</strong> creates H-1B visa for &ldquo;specialty occupations&rdquo; requiring a bachelor&rsquo;s degree. Cap set at 65,000/year. Filing fee: $0. Intent: attract world-class talent in medicine, science, engineering. No wage protections. No worker displacement rules.</div></div>
+      <div class="tl-item"><div class="tl-yr">1998 &mdash; First Expansion (Clinton)</div><div class="tl-txt"><strong>ACWIA</strong> raises cap to 115,000. Adds first worker protections: LCA requirement, displacement rules (can&rsquo;t fire Americans 90 days before/after H-1B hire), prevailing wage at 95%. First filing fee: $500. Indian IT firms (Infosys, TCS, Wipro) begin Y2K-driven mass hiring.</div></div>
+      <div class="tl-item era-red"><div class="tl-yr">2000 &mdash; The Floodgates Open (Clinton)</div><div class="tl-txt"><strong>AC21 (American Competitiveness in the 21st Century)</strong> &mdash; the law that changed everything. Cap tripled to 195,000. <strong>Section 105: Job portability</strong> &mdash; H-1B workers can now transfer between employers instantly. This single provision created the &ldquo;Change of Employer&rdquo; pipeline. Cap-exempt categories created (universities, nonprofits). Body shopping model goes from Y2K tactic to permanent business model.</div></div>
+      <div class="tl-item"><div class="tl-yr">2004 &mdash; Partial Rollback (Bush Jr.)</div><div class="tl-txt"><strong>H-1B Visa Reform Act</strong> cuts cap back to 65,000. Creates 20,000 master&rsquo;s degree exemption (total: 85K). Prevailing wage raised from 95% to 100%. Filing fees tripled. Anti-fraud fee added. But the body-shopping infrastructure was already built &mdash; outsourcing firms simply became more sophisticated.</div></div>
+      <div class="tl-item era-yellow"><div class="tl-yr">2006 &mdash; The Exposure</div><div class="tl-txt">Senators <strong>Durbin &amp; Grassley</strong> release H-1B employer data. Finding: <strong>over 50% of top 30 H-1B employers are outsourcing/staffing firms</strong> &mdash; not product companies directly hiring specialists. The body-shopping model is now public. Congress does nothing.</div></div>
+      <div class="tl-item era-red"><div class="tl-yr">2017 &mdash; Buy American, Hire American (Trump)</div><div class="tl-txt"><strong>Executive Order</strong> directs agencies to prioritize highest-skilled, highest-paid H-1B applicants. USCIS increases site visits, RFEs (Requests for Evidence). Denial rates spike from 4% to 24%. Indian IT firms begin hiring more Americans domestically to reduce visa dependency.</div></div>
+      <div class="tl-item"><div class="tl-yr">2021&ndash;2024 &mdash; Biden Reversal</div><div class="tl-txt">Trump restrictions largely reversed. Proposed H-1B expansions (failed in Congress). 2024: Modified lottery to prevent fraud/collusion by outsourcing firms gaming duplicate registrations. 2025 (outgoing): <strong>Weighted lottery rule</strong> &mdash; higher wages get more entries. Effective FY2027.</div></div>
+      <div class="tl-item era-purple"><div class="tl-yr">2025 &mdash; The $100K Shock (Trump II)</div><div class="tl-txt"><strong>September 2025 Executive Order:</strong> $100,000 per new H-1B petition (was $2K&ndash;5K). A 20&ndash;50x increase. Expanded screening and vetting. Suspended visa interviews. <strong>December 2025:</strong> Weighted selection rule finalized &mdash; Level IV wages get 4 entries, Level I gets 1. Most dramatic changes in 36-year program history.</div></div>
+    </div>
+  </div>
+</div>
+
+
+<!-- ======================= TAB: THE AI ERA ======================= -->
+<div class="tab-panel" id="panel-ai">
+  <div class="sec-head">
+    <h2 style="background: linear-gradient(90deg, #00e5ff, #0088ff, #d500f9); -webkit-background-clip: text; -webkit-text-fill-color: transparent;">The AI Era: Why H-1B Demand Is Collapsing</h2>
+    <p>AI and automation are eliminating the exact job categories that drove H-1B growth. The outsourcing model is dying. The numbers prove it. Sources: Goldman Sachs, McKinsey, NASSCOM, a16z, GitHub, Business Standard.</p>
+  </div>
+  <div class="kpi-strip">
+    <div class="kpi"><div class="kpi-val" style="color:#00e5ff;text-shadow:0 0 20px rgba(0,229,255,0.5);">57%</div><div class="kpi-lbl">Of U.S. Work Hours<br>Automatable Now (McKinsey)</div></div>
+    <div class="kpi"><div class="kpi-val r">64,759</div><div class="kpi-lbl">TCS+Infosys+Wipro<br>Headcount Cut FY2024</div></div>
+    <div class="kpi"><div class="kpi-val b">55.8%</div><div class="kpi-lbl">Faster Task Completion<br>With AI Coding Tools</div></div>
+    <div class="kpi"><div class="kpi-val g">4M &rarr; &lt;1M</div><div class="kpi-lbl">India BPO Jobs<br>Projected by 2030</div></div>
+    <div class="kpi"><div class="kpi-val o">70&ndash;80%</div><div class="kpi-lbl">BPO Valuation<br>Multiple Collapse</div></div>
+    <div class="kpi"><div class="kpi-val y">300M</div><div class="kpi-lbl">Global Jobs Replaceable<br>by AI (Goldman Sachs)</div></div>
+    <div class="kpi"><div class="kpi-val" style="color:#00e5ff;text-shadow:0 0 20px rgba(0,229,255,0.5);">79,331</div><div class="kpi-lbl">Indians on OPT<br>&ldquo;Shadow Visas&rdquo; (2024)</div></div>
+    <div class="kpi"><div class="kpi-val r">42.5%</div><div class="kpi-lbl">Recent Grad<br>Underemployment (Q4&rsquo;25)</div></div>
+  </div>
+
+  <div class="callout" style="border-left-color: #00e5ff; background: linear-gradient(145deg, #001520, #002030); border-color: #004466; color: #b0e8ff;">
+    <strong style="color: #00e5ff;">The Argument:</strong> The H-1B visa was created in 1990 to fill a talent gap &mdash; not enough Americans with specialized skills. AI has inverted this equation. GitHub Copilot makes one developer do the work of two. AI agents automate testing, code review, data analysis, and customer service &mdash; the exact tasks that Indian IT outsourcing firms bill billions for. The top 3 Indian IT firms (TCS, Infosys, Wipro) cut 64,759 jobs in a single year while increasing profits. India&rsquo;s $50B BPO sector is projected to lose 75% of its workforce by 2030. The outsourcing pipeline that fed H-1B demand is being replaced by AI. <strong style="color:#ff1744;">Meanwhile, 79,331 Indian nationals are on OPT &ldquo;shadow visas&rdquo;</strong> (48% of all STEM OPT) &mdash; a parallel pipeline that bypasses H-1B caps entirely. Recent college grad underemployment hit 42.5% (Q4 2025) and CS unemployment is 6.1%. The workers AI replaces are the same workers H-1B imports.
+  </div>
+
+  <div class="grid">
+    <div class="card wide" style="border-color:#004466;"><h3 style="color:#00e5ff;">The AI Productivity Revolution: Developers Need Fewer Teammates</h3><p class="desc">AI coding tools are making individual developers dramatically more productive &mdash; reducing the need for large teams that drove H-1B staffing. 63% of professional developers now use AI tools. 15 million GitHub Copilot users. Tasks completed 55.8% faster. Source: GitHub (2025), Index.dev.</p><div class="cw"><canvas id="c_aiDev"></canvas></div></div>
+
+    <div class="card" style="border-color:#004466;"><h3 style="color:#00e5ff;">Indian IT Giants: Cutting While Profiting</h3><p class="desc">TCS, Infosys, Wipro &mdash; the same firms that account for 39.7% of top 100 H-1B employers &mdash; cut 64,759 employees in FY2024. Revenue and profits INCREASED. AI lets them do more with fewer people. Source: Business Standard, company filings.</p><div class="cw" style="height:360px"><canvas id="c_aiIndiaIT"></canvas></div></div>
+
+    <div class="card" style="border-color:#004466;"><h3 style="color:#00e5ff;">BPO Employment Collapse: 4M &rarr; &lt;1M</h3><p class="desc">India&rsquo;s $50B BPO sector employed 4 million people. AI is projected to cut that to under 1 million by 2030 &mdash; a 75% reduction. One Bangladesh BPO firm reported AI eliminated 80%+ of jobs on automatable projects. Source: Outsource Accelerator, a16z.</p><div class="cw"><canvas id="c_aiBPO"></canvas></div></div>
+
+    <div class="card wide danger" style="border-color:#660022;"><h3 class="alert">What AI Replaces: The Exact H-1B Job Categories</h3><p class="desc">The tasks that drove H-1B demand &mdash; software testing, code review, data entry, customer service, business analysis &mdash; are the first to be automated. Code review: hours &rarr; minutes. Testing: fully automatable. Data analysis: AI agents outperform entry-level analysts. Source: McKinsey, DigitalOcean, a16z.</p><div class="cw" style="height:380px"><canvas id="c_aiTasks"></canvas></div></div>
+
+    <div class="card wide" style="border-color:#004466;"><h3 style="color:#00e5ff;">The Outsourcing Business Model Is Dying</h3><p class="desc"><strong style="color:#00e5ff;">What is BPO?</strong> Business Process Outsourcing &mdash; when U.S. companies hire overseas firms (TCS, Infosys, Wipro) to handle IT, customer service, and back-office work. These firms bill &ldquo;per worker&rdquo; (the FTE model), which is exactly what drives H-1B demand. <strong style="color:#ff1744;">AI replaces workers with software agents</strong> &mdash; no visa needed. BPO company valuations have collapsed 70&ndash;80%. The per-worker billing model is falling from 42% to 28% of contracts as companies switch to AI-powered &ldquo;pay per result&rdquo; pricing. Source: a16z, CallMiner, Anyreach.</p><div class="cw"><canvas id="c_aiBPOModel"></canvas></div></div>
+
+    <div class="card wide alert" style="border-color:#664400;"><h3 class="warn">The Math: H-1B Supply vs. AI Displacement</h3><p class="desc">If AI eliminates even 30% of outsourcing-driven H-1B demand (conservative vs. McKinsey&rsquo;s 57%), that&rsquo;s ~170,000 fewer visa slots needed annually. At current volumes (~400K approvals/year), the program could shrink by 40%+ and still serve genuine specialty needs. Meanwhile, the $100K filing fee (2025) is already pricing out the body-shopping model. Source: Analysis based on USCIS data + McKinsey/Goldman Sachs automation projections.</p><div class="cw"><canvas id="c_aiMath"></canvas></div></div>
+  </div>
+  <div class="sources"><strong>Sources:</strong> Goldman Sachs &ldquo;The Potentially Large Effects of AI on Economic Growth&rdquo; (2023) &bull; McKinsey Global Institute AI Automation Analysis (2025) &bull; GitHub Copilot Statistics (2025) &bull; Business Standard: TCS/Infosys/Wipro FY24 Headcount Data &bull; a16z &ldquo;Unbundling the BPO&rdquo; (2025) &bull; Outsource Accelerator &ldquo;AI Indian BPO Jobs 2030&rdquo; &bull; Anyreach: BPO Valuation Multiples Analysis &bull; CallMiner: BPO Business Model Reshaping &bull; Index.dev: Developer Productivity Statistics (2026) &bull; GitClear: AI Code Quality Research (2025).</div>
+</div>
+
+<!-- ======================= TAB 9: SOURCES & METHODOLOGY ======================= -->
+<div class="tab-panel" id="panel-timeline">
+  <div class="sec-head">
+    <h2 style="background: linear-gradient(90deg, #0088ff, #00e5ff); -webkit-background-clip: text; -webkit-text-fill-color: transparent;">Sources &amp; Methodology</h2>
+    <p>Every number in this dashboard is sourced from official U.S. government databases or peer-reviewed research. No estimates except where noted.</p>
+  </div>
+  <div class="grid">
+    <div class="card wide" style="border-color:#0044aa;">
+      <h3 style="color:#0088ff;">Primary Government Sources</h3>
+      <p class="desc" style="font-size:0.82rem;line-height:1.7;color:#b0b8d0;">
+        <strong style="color:#fff;">USCIS H-1B Employer Data Hub</strong> &mdash; 844,054 individual employer filing records across all 50 states + territories, FY2009&ndash;2026. Columns: employer name, city, state, NAICS code, approval/denial counts by category (New Employment, Continuation, Change of Employer, Amended, etc.). CA data partially incomplete due to download limitations. Data downloaded March 2026.<br><br>
+        <strong style="color:#fff;">DOL Foreign Labor Certification LCA Disclosure Data</strong> &mdash; 7,629 Massachusetts Labor Condition Applications analyzed (FY2020 Q1 &amp; FY2024 Q1). Contains actual job titles, SOC codes, wage rates, wage units, prevailing wage levels (I&ndash;IV), employer names, and worksites. Wages standardized to annual equivalents where filed hourly ($&times;2080).<br><br>
+        <strong style="color:#fff;">USCIS H-1B Characteristics Congressional Reports</strong> &mdash; Annual reports to Congress, FY2003&ndash;2024. Used for India-born share percentages and total approval counts by country of birth.<br><br>
+        <strong style="color:#fff;">Bureau of Labor Statistics (BLS)</strong> &mdash; Labor force participation rates, manufacturing employment data, 2000&ndash;2025. Via FRED (Federal Reserve Economic Data).<br><br>
+        <strong style="color:#fff;">Congress.gov</strong> &mdash; Full text of Immigration Act of 1990, ACWIA (1998), AC21 (2000), H-1B Visa Reform Act (2004). Executive orders via Federal Register.<br><br>
+        <strong style="color:#fff;">ICE (Immigration &amp; Customs Enforcement)</strong> &mdash; Infosys record $34 million settlement for systemic visa fraud. Press release, 2013.<br><br>
+        <strong style="color:#fff;">DOL Project Firewall</strong> &mdash; 175+ active H-1B investigations launched September 2025.<br><br>
+        <strong style="color:#fff;">Cognizant Federal Jury Verdict (2024)</strong> &mdash; Found liable for intentional discrimination against non-Indian/non-South Asian employees. Duane Morris case analysis.<br><br>
+        <strong style="color:#fff;">TCS Wage Theft Settlement</strong> &mdash; $30 million settlement for 13,000 foreign workers. EPI documentation.<br><br>
+        <strong style="color:#fff;">GAO-11-26 (2011)</strong> &mdash; &ldquo;H-1B Visa Program: Reforms Are Needed to Minimize Risks and Costs.&rdquo;<br><br>
+        <strong style="color:#fff;">DHS OIG Report (2017)</strong> &mdash; USCIS Needs Better Approach to Verify H-1B Participants.<br><br>
+        <strong style="color:#fff;">Jason Miller / SHW Partners LLC</strong> &mdash; Indian government $1.8M/year lobbying contract (May 2025). Sources: Business Standard, Odwyer PR, Business Today.
+      </p>
+    </div>
+    <div class="card" style="border-color:#0044aa;">
+      <h3 style="color:#0088ff;">Research Sources</h3>
+      <p class="desc" style="font-size:0.82rem;line-height:1.7;color:#b0b8d0;">
+        <strong style="color:#fff;">NBER Working Paper #23153</strong> &mdash; &ldquo;The Effect of Immigration on Wages&rdquo; &mdash; CS wage suppression estimates (2.6&ndash;5.1%) and employment reduction (6.1&ndash;10.8%).<br><br>
+        <strong style="color:#fff;">Economic Policy Institute (EPI)</strong> &mdash; Prevailing wage level analysis showing 60% of H-1B positions below median, Level I at 36% discount.<br><br>
+        <strong style="color:#fff;">Pew Research Center</strong> &mdash; H-1B demographic analysis, March 2025.<br><br>
+        <strong style="color:#fff;">Heritage Foundation</strong> &mdash; Structural H-1B failure analysis.
+      </p>
+    </div>
+    <div class="card" style="border-color:#0044aa;">
+      <h3 style="color:#0088ff;">Industry Sources</h3>
+      <p class="desc" style="font-size:0.82rem;line-height:1.7;color:#b0b8d0;">
+        <strong style="color:#fff;">NASSCOM</strong> &mdash; India IT/BPO revenue data ($6B&ndash;$300B trajectory), GCC counts and employee figures.<br><br>
+        <strong style="color:#fff;">Zinnov / Deloitte</strong> &mdash; GCC growth estimates, India headcount by company.<br><br>
+        <strong style="color:#fff;">Company SEC filings</strong> &mdash; Used for India employee counts where publicly reported.
+      </p>
+    </div>
+    <div class="card wide" style="border-color:#663300;">
+      <h3 style="color:#ffea00;">Methodology Notes</h3>
+      <p class="desc" style="font-size:0.82rem;line-height:1.7;color:#b0b8d0;">
+        <strong style="color:#fff;">Entity Consolidation:</strong> USCIS data contains multiple name variations per company (e.g., &ldquo;Cognizant Tech Solns US Corp&rdquo; vs &ldquo;Cognizant Tech Solutions US Corp&rdquo; vs &ldquo;Cognizant Technology Solutions US&rdquo;). Major entities consolidated for top employer charts. Raw data preserved in per-filing charts.<br><br>
+        <strong style="color:#fff;">Outsourcing Firm Identification:</strong> Companies classified as &ldquo;outsourcing/staffing&rdquo; based on known industry lists: Infosys, Cognizant, TCS, Wipro, HCL, Tech Mahindra, Capgemini, Randstad, Kforce, Compunnel, Virtusa, Sapient, etc. Classification is conservative &mdash; actual outsourcing share is likely higher.<br><br>
+        <strong style="color:#fff;">India Revenue Interpolation:</strong> Where exact year-by-year NASSCOM figures were unavailable, values were linearly interpolated between known data points. Marked with ~.<br><br>
+        <strong style="color:#fff;">H-1B Country Share:</strong> USCIS Congressional reports provide India % for initial approvals. Continuation/amendment percentages estimated from prior year distributions.
+      </p>
+    </div>
+  </div>
+</div>
+
+<script>
+// ===== INIT =====
+const fc = '#8090b0', gc = 'rgba(255,255,255,0.04)';
+Chart.defaults.color = fc;
+Chart.defaults.font.family = "'Segoe UI', system-ui, sans-serif";
+Chart.defaults.color = '#b0b8d0';
+Chart.defaults.plugins.legend.labels.usePointStyle = true;
+Chart.defaults.font.weight = '600';
+const tt = { backgroundColor: '#0a0a2a', titleColor: '#ffffff', bodyColor: '#d0d8f0', borderColor: '#0066ff', borderWidth: 1, titleFont:{weight:'bold'} };
+
+// ===== STATE SEARCH DATA =====
+const stateData = {
+  'AL':{n:'Alabama',a:15734,d:648,emp:2239,ne:6893,ce:2252},'AK':{n:'Alaska',a:1630,d:96,emp:393,ne:1016,ce:116},'AZ':{n:'Arizona',a:71124,d:3259,emp:5504,ne:28506,ce:11419},'AR':{n:'Arkansas',a:34510,d:983,emp:1282,ne:10270,ce:5395},'CO':{n:'Colorado',a:38056,d:2033,emp:5129,ne:14830,ce:6710},'CT':{n:'Connecticut',a:55443,d:2648,emp:5422,ne:16447,ce:12244},'DE':{n:'Delaware',a:21699,d:2127,emp:1767,ne:5437,ce:6054},'DC':{n:'District of Columbia',a:25180,d:1316,emp:4748,ne:9866,ce:4815},'FL':{n:'Florida',a:155772,d:14276,emp:26809,ne:62504,ce:28014},'GA':{n:'Georgia',a:141182,d:12866,emp:12424,ne:56133,ce:25371},'HI':{n:'Hawaii',a:3708,d:295,emp:1051,ne:2219,ce:489},'ID':{n:'Idaho',a:8456,d:239,emp:559,ne:3252,ce:1025},'IL':{n:'Illinois',a:319915,d:22626,emp:18877,ne:104704,ce:56762},'IN':{n:'Indiana',a:33382,d:1505,emp:4018,ne:11768,ce:6117},'IA':{n:'Iowa',a:20397,d:1383,emp:2026,ne:5700,ce:3279},'KS':{n:'Kansas',a:18963,d:1329,emp:2245,ne:6373,ce:3579},'KY':{n:'Kentucky',a:18499,d:989,emp:2107,ne:6547,ce:3001},'LA':{n:'Louisiana',a:16113,d:820,emp:2534,ne:9165,ce:2259},'ME':{n:'Maine',a:4721,d:286,emp:647,ne:2760,ce:574},'MD':{n:'Maryland',a:217962,d:15164,emp:8572,ne:65002,ce:42484},'MA':{n:'Massachusetts',a:245552,d:13288,emp:16544,ne:83909,ce:50729},'MI':{n:'Michigan',a:196024,d:15849,emp:10837,ne:60543,ce:38076},'MN':{n:'Minnesota',a:57515,d:2193,emp:4850,ne:17614,ce:11773},'MS':{n:'Mississippi',a:5782,d:240,emp:934,ne:3234,ce:622},'MO':{n:'Missouri',a:53196,d:2792,emp:4102,ne:15988,ce:10610},'MT':{n:'Montana',a:1591,d:73,emp:345,ne:810,ce:181},'NE':{n:'Nebraska',a:18256,d:725,emp:1424,ne:5506,ce:2994},'NV':{n:'Nevada',a:9145,d:715,emp:2303,ne:3908,ce:1663},'NH':{n:'New Hampshire',a:9632,d:783,emp:1256,ne:3222,ce:1891},'NJ':{n:'New Jersey',a:651235,d:60379,emp:21378,ne:197513,ce:131449},'NM':{n:'New Mexico',a:8924,d:483,emp:1136,ne:4395,ce:1227},'NY':{n:'New York',a:436437,d:19264,emp:54104,ne:181610,ce:75131},'NC':{n:'North Carolina',a:133942,d:7708,emp:7348,ne:42825,ce:27166},'ND':{n:'North Dakota',a:3639,d:180,emp:642,ne:1953,ce:492},'OH':{n:'Ohio',a:89539,d:6073,emp:8217,ne:28760,ce:17949},'OK':{n:'Oklahoma',a:12831,d:676,emp:2288,ne:5700,ce:2183},'OR':{n:'Oregon',a:18409,d:894,emp:2518,ne:7736,ce:3253},'PA':{n:'Pennsylvania',a:214189,d:14569,emp:12135,ne:69069,ce:42547},'RI':{n:'Rhode Island',a:18753,d:459,emp:978,ne:5558,ce:2822},'SC':{n:'South Carolina',a:17279,d:1188,emp:2561,ne:6771,ce:3099},'SD':{n:'South Dakota',a:6532,d:154,emp:409,ne:1649,ce:853},'TN':{n:'Tennessee',a:56520,d:1893,emp:4003,ne:16997,ce:10430},'TX':{n:'Texas',a:755344,d:66154,emp:38530,ne:262363,ce:137267},'UT':{n:'Utah',a:17770,d:968,emp:2739,ne:7256,ce:3277},'VT':{n:'Vermont',a:4743,d:142,emp:529,ne:2597,ce:517},'VA':{n:'Virginia',a:232302,d:15088,emp:12254,ne:73044,ce:45826},'WA':{n:'Washington',a:223854,d:6415,emp:8024,ne:73627,ce:41497},'WV':{n:'West Virginia',a:3986,d:173,emp:654,ne:2156,ce:496},'WI':{n:'Wisconsin',a:42280,d:1642,emp:3428,ne:12779,ce:7620},'WY':{n:'Wyoming',a:1467,d:228,emp:421,ne:667,ce:190}
+};
+const stateNames = {'AL':'Alabama','AK':'Alaska','AZ':'Arizona','AR':'Arkansas','CA':'California','CO':'Colorado','CT':'Connecticut','DE':'Delaware','DC':'District of Columbia','FL':'Florida','GA':'Georgia','HI':'Hawaii','ID':'Idaho','IL':'Illinois','IN':'Indiana','IA':'Iowa','KS':'Kansas','KY':'Kentucky','LA':'Louisiana','ME':'Maine','MD':'Maryland','MA':'Massachusetts','MI':'Michigan','MN':'Minnesota','MS':'Mississippi','MO':'Missouri','MT':'Montana','NE':'Nebraska','NV':'Nevada','NH':'New Hampshire','NJ':'New Jersey','NM':'New Mexico','NY':'New York','NC':'North Carolina','ND':'North Dakota','OH':'Ohio','OK':'Oklahoma','OR':'Oregon','PA':'Pennsylvania','RI':'Rhode Island','SC':'South Carolina','SD':'South Dakota','TN':'Tennessee','TX':'Texas','UT':'Utah','VT':'Vermont','VA':'Virginia','WA':'Washington','WV':'West Virginia','WI':'Wisconsin','WY':'Wyoming'};
+
+document.getElementById('stateSearch').addEventListener('input', function(e) {
+  const q = e.target.value.trim().toUpperCase();
+  const card = document.getElementById('stateCard');
+  const content = document.getElementById('stateCardContent');
+  const result = document.getElementById('stateResult');
+  if (!q) { card.style.display='none'; result.textContent=''; return; }
+  // Match by abbreviation or name
+  let match = null;
+  if (stateData[q]) { match = q; }
+  else { for (const [k,v] of Object.entries(stateData)) { if (v.n && v.n.toUpperCase().includes(q)) { match = k; break; } } }
+  if (!match) {
+    // Try partial abbrev
+    for (const k of Object.keys(stateData)) { if (k.startsWith(q)) { match = k; break; } }
+  }
+  if (match) {
+    const d = stateData[match];
+    const denialRate = ((d.d/(d.a+d.d))*100).toFixed(1);
+    const cePct = ((d.ce/d.a)*100).toFixed(1);
+    card.style.display='block';
+    result.textContent='';
+    content.innerHTML = '<div style="grid-column:1/-1;font-size:1.1rem;font-weight:900;color:#0088ff;text-shadow:0 0 15px rgba(0,136,255,0.5);">'+d.n+' ('+match+')</div>'+
+      '<div style="text-align:center;"><div style="font-size:1.5rem;font-weight:900;color:#0088ff;">'+d.a.toLocaleString()+'</div><div style="font-size:0.7rem;color:#8090b0;text-transform:uppercase;">Approvals</div></div>'+
+      '<div style="text-align:center;"><div style="font-size:1.5rem;font-weight:900;color:#ff1744;">'+d.d.toLocaleString()+'</div><div style="font-size:0.7rem;color:#8090b0;text-transform:uppercase;">Denials ('+denialRate+'%)</div></div>'+
+      '<div style="text-align:center;"><div style="font-size:1.5rem;font-weight:900;color:#00e676;">'+d.emp.toLocaleString()+'</div><div style="font-size:0.7rem;color:#8090b0;text-transform:uppercase;">Unique Employers</div></div>'+
+      '<div style="text-align:center;"><div style="font-size:1.5rem;font-weight:900;color:#ffea00;">'+d.ne.toLocaleString()+'</div><div style="font-size:0.7rem;color:#8090b0;text-transform:uppercase;">New Employment</div></div>'+
+      '<div style="text-align:center;"><div style="font-size:1.5rem;font-weight:900;color:#ff6d00;">'+d.ce.toLocaleString()+'</div><div style="font-size:0.7rem;color:#8090b0;text-transform:uppercase;">Change of Employer ('+cePct+'%)</div></div>';
+  } else {
+    card.style.display='none';
+    result.textContent='No match for "'+e.target.value+'"';
+    result.style.color='#ff1744';
+  }
+});
+
+// ===== TAB SYSTEM =====
+const chartInstances = {};
+let initialized = { overview: false };
+
+document.querySelectorAll('.tab-btn').forEach(btn => {
+  btn.addEventListener('click', () => {
+    document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+    document.querySelectorAll('.tab-panel').forEach(p => p.classList.remove('active'));
+    btn.classList.add('active');
+    const tab = btn.dataset.tab;
+    document.getElementById('panel-' + tab).classList.add('active');
+    if (!initialized[tab]) { initTab(tab); initialized[tab] = true; }
+    // Resize charts in active tab
+    Object.values(chartInstances).forEach(c => c.resize());
+  });
+});
+
+function mk(id, cfg) { chartInstances[id] = new Chart(document.getElementById(id), cfg); }
+
+// ===== OVERVIEW TAB =====
+function initOverview() {
+  const yrs26 = ['2000','2001','2002','2003','2004','2005','2006','2007','2008','2009','2010','2011','2012','2013','2014','2015','2016','2017','2018','2019','2020','2021','2022','2023','2024','2025'];
+  const lfp = [67.1,66.8,66.6,66.2,66.0,66.0,66.2,66.0,66.0,65.4,64.7,64.1,63.7,63.2,62.9,62.7,62.8,62.9,62.9,63.1,61.7,61.7,62.2,62.6,62.5,62.4];
+  const mfg = [17.3,16.4,15.3,14.5,14.3,14.2,14.2,13.7,13.4,11.5,11.5,11.7,12.0,12.0,12.2,12.3,12.3,12.4,12.7,12.8,12.2,12.3,12.8,12.9,12.8,12.7];
+  const indRev = [5.9,7.5,9.5,12,16,23.6,31,47,52,50,59,69,76,86,100,118,130,154,167,177,190,217,227,254,283,300];
+
+  mk('c_participation', { type:'line', data:{ labels:yrs26, datasets:[
+    { label:'Participation Rate (%)', data:lfp, borderColor:'#ffea00', backgroundColor:'rgba(255,234,0,0.08)', fill:true, tension:0.3, pointRadius:yrs26.map(y=>y==='2000'?7:3), pointBackgroundColor:yrs26.map(y=>y==='2000'?'#ffea00':'rgba(255,234,0,0.6)'), yAxisID:'y' },
+    { label:'Mfg Jobs (M)', data:mfg, borderColor:'#ff1744', backgroundColor:'rgba(255,23,68,0.08)', fill:true, tension:0.3, pointRadius:3, yAxisID:'y1' }
+  ]}, options:{ responsive:true, interaction:{mode:'index',intersect:false}, scales:{ y:{position:'left',title:{display:true,text:'Rate (%)',color:'#ffea00'},grid:{color:gc},ticks:{color:'#ffea00'},min:59,max:69}, y1:{position:'right',title:{display:true,text:'Mfg (M)',color:'#ff1744'},grid:{drawOnChartArea:false},ticks:{color:'#ff1744'},min:10,max:19}, x:{grid:{color:gc}} }, plugins:{tooltip:tt} }});
+
+  mk('c_crossover', { type:'line', data:{ labels:yrs26, datasets:[
+    { label:'U.S. Mfg Jobs (M)', data:mfg, borderColor:'#ff1744', backgroundColor:'rgba(255,23,68,0.08)', fill:true, tension:0.3, pointRadius:3, yAxisID:'y' },
+    { label:'India IT Revenue ($B)', data:indRev, borderColor:'#00e676', backgroundColor:'rgba(0,230,118,0.08)', fill:true, tension:0.3, pointRadius:3, yAxisID:'y1' }
+  ]}, options:{ responsive:true, interaction:{mode:'index',intersect:false}, scales:{ y:{position:'left',title:{display:true,text:'Mfg Jobs (M)',color:'#ff1744'},grid:{color:gc},ticks:{color:'#ff1744'},min:10,max:19}, y1:{position:'right',title:{display:true,text:'India IT ($B)',color:'#00e676'},grid:{drawOnChartArea:false},ticks:{color:'#00e676'},min:0,max:320}, x:{grid:{color:gc}} }, plugins:{tooltip:tt} }});
+
+  const rY = ['FY01','FY03','FY05','FY07','FY09','FY11','FY13','FY15','FY17','FY19','FY21','FY23','FY25','FY26'];
+  const rD = [5.9,12,23.6,47,50,69,86,118,154,177,217,254,283,300];
+  mk('c_revenue', { type:'bar', data:{ labels:rY, datasets:[{ label:'Revenue ($B)', data:rD, backgroundColor:rD.map((v,i)=>`rgba(96,165,250,${0.35+(i/rY.length)*0.65})`), borderColor:'#0088ff', borderWidth:1, borderRadius:4 }]}, options:{ responsive:true, scales:{ y:{grid:{color:gc},title:{display:true,text:'USD Billions'}}, x:{grid:{color:gc}} }, plugins:{tooltip:tt} }});
+
+  const gY = ['2000','2005','2010','2015','2019','2022','2023','2024','2025'];
+  mk('c_gcc', { type:'bar', data:{ labels:gY, datasets:[
+    { label:'GCCs', data:[500,700,900,1100,1300,1500,1580,1700,1800], backgroundColor:'rgba(213,0,249,0.6)', borderColor:'#d500f9', borderWidth:1, borderRadius:4, yAxisID:'y' },
+    { label:'Employees (M)', data:[0.2,0.4,0.6,0.9,1.2,1.5,1.66,1.8,1.9], type:'line', borderColor:'#ff6d00', backgroundColor:'rgba(255,109,0,0.1)', fill:true, tension:0.3, pointRadius:4, yAxisID:'y1' }
+  ]}, options:{ responsive:true, scales:{ y:{position:'left',title:{display:true,text:'Count',color:'#d500f9'},grid:{color:gc},ticks:{color:'#d500f9'}}, y1:{position:'right',title:{display:true,text:'Employees (M)',color:'#ff6d00'},grid:{drawOnChartArea:false},ticks:{color:'#ff6d00'},min:0,max:2.5}, x:{grid:{color:gc}} }, plugins:{tooltip:tt} }});
+
+  mk('c_share', { type:'doughnut', data:{ labels:['India (55%)','Philippines (12%)','China (8%)','E. Europe (7%)','LatAm (6%)','Others (12%)'], datasets:[{ data:[55,12,8,7,6,12], backgroundColor:['#0088ff','#00e676','#ff1744','#d500f9','#ff6d00','#334488'], borderColor:'#050510', borderWidth:3 }]}, options:{ responsive:true, cutout:'55%', plugins:{legend:{position:'right',labels:{color:'#ffffff',padding:12,font:{size:11,weight:'bold'}}}} }});
+
+  const co = ['Accenture','Infosys','TCS','Wipro','Amazon','IBM','Cognizant','Microsoft','JPMorgan','Google','Goldman Sachs','Walmart'];
+  const hc = [250,200,180,160,150,140,120,70,50,40,30,30];
+  mk('c_company', { type:'bar', data:{ labels:co, datasets:[{ label:'India Employees (K)', data:hc, backgroundColor:hc.map((v,i)=>i<4?'rgba(255,109,0,0.6)':'rgba(0,136,255,0.6)'), borderColor:hc.map((v,i)=>i<4?'#ff6d00':'#0088ff'), borderWidth:1, borderRadius:4 }]}, options:{ indexAxis:'y', responsive:true, scales:{ x:{grid:{color:gc},title:{display:true,text:'Thousands'}}, y:{grid:{color:gc},ticks:{font:{size:10}}} }, plugins:{tooltip:tt} }});
+
+  const sec = ['Call Centers','Data Entry','Software Dev','Finance/Acct','Engineering/R&D','Legal/HR','Analytics/AI'];
+  mk('c_sector', { type:'bar', data:{ labels:sec, datasets:[
+    { label:'~2000', data:[35,25,20,10,5,3,2], backgroundColor:'rgba(255,23,68,0.6)', borderColor:'#ff1744', borderWidth:1, borderRadius:4 },
+    { label:'2025', data:[10,5,30,15,18,10,12], backgroundColor:'rgba(0,136,255,0.6)', borderColor:'#0088ff', borderWidth:1, borderRadius:4 }
+  ]}, options:{ responsive:true, scales:{ y:{grid:{color:gc},title:{display:true,text:'% of Offshored Work'}}, x:{grid:{color:gc}} }, plugins:{tooltip:tt} }});
+}
+
+// ===== H-1B TAB =====
+function initH1b() {
+  const hY = ['FY01','FY02','FY03','FY04','FY05','FY06','FY07','FY08','FY09','FY10','FY11','FY12','FY13','FY14','FY15','FY16','FY17','FY18','FY19','FY20','FY21','FY22','FY23','FY24'];
+  const hT = [331,198,217,287,267,272,278,276,214,192,269,262,286,316,348,346,365,389,388,396,407,266,386,399];
+  const iS = [41,43,36,40,43,46,49,52,54,56,58,61,64,67,69,80,76,74,73,75,74,73,72,71];
+  const iA = hT.map((t,i)=>Math.round(t*iS[i]/100));
+
+  mk('c_h1b', { type:'bar', data:{ labels:hY, datasets:[
+    { label:'Total (K)', data:hT, backgroundColor:'rgba(128,144,176,0.3)', borderColor:'#8090b0', borderWidth:1, borderRadius:3 },
+    { label:'India (K)', data:iA, backgroundColor:'rgba(0,136,255,0.7)', borderColor:'#0088ff', borderWidth:1, borderRadius:3 },
+    { label:'India %', type:'line', data:iS, borderColor:'#00e676', backgroundColor:'transparent', tension:0.3, pointRadius:3, yAxisID:'y1' }
+  ]}, options:{ responsive:true, interaction:{mode:'index',intersect:false}, scales:{ y:{position:'left',title:{display:true,text:'Approvals (K)'},grid:{color:gc},stacked:false}, y1:{position:'right',title:{display:true,text:'India %',color:'#00e676'},grid:{drawOnChartArea:false},ticks:{color:'#00e676'},min:20,max:90}, x:{grid:{color:gc}} }, plugins:{tooltip:tt} }});
+
+  const eL = ['Cognizant','Infosys','TCS','Amazon','Microsoft','Wipro','Deloitte','Google','Accenture','IBM','HCL','Apple','Meta','Capgemini','Intel','JPMorgan','Tech Mahindra','E&Y','Oracle','Cisco'];
+  const eD = [207652,147503,133112,126732,79017,77895,69842,62827,55209,49864,48714,44916,42735,37096,36573,29952,29785,29451,27494,27072];
+  const eI = [1,1,1,0,0,1,0,0,0,0,1,0,0,0,0,0,1,0,0,0];
+  mk('c_h1bEmployer', { type:'bar', data:{ labels:eL, datasets:[{ label:'Approvals', data:eD, backgroundColor:eI.map(v=>v?'rgba(255,109,0,0.75)':'rgba(0,136,255,0.6)'), borderColor:eI.map(v=>v?'#ff6d00':'#0088ff'), borderWidth:1, borderRadius:4 }]}, options:{ indexAxis:'y', responsive:true, maintainAspectRatio:false, scales:{ x:{grid:{color:gc},ticks:{callback:v=>(v/1000)+'K'}}, y:{grid:{color:gc},ticks:{font:{size:10}}} }, plugins:{ tooltip:{...tt,callbacks:{label:ctx=>ctx.parsed.x.toLocaleString()+' approvals'}}, legend:{display:true,labels:{color:'#ffffff',font:{size:12,weight:'bold'},generateLabels:()=>[{text:'Indian-HQ IT Firm',fillStyle:'rgba(255,109,0,0.75)',strokeStyle:'#ff6d00',lineWidth:2,pointStyle:'rect',fontColor:'#ffffff'},{text:'U.S. / Other Company',fillStyle:'rgba(0,136,255,0.6)',strokeStyle:'#0088ff',lineWidth:2,pointStyle:'rect',fontColor:'#ffffff'}]}} } }});
+
+  mk('c_h1bShare', { type:'doughnut', data:{ labels:['Indian IT (39.7%)','U.S./Other (60.3%)'], datasets:[{ data:[719696,1091038], backgroundColor:['#ff6d00','#0088ff'], borderColor:'#050510', borderWidth:3 }]}, options:{ responsive:true, cutout:'60%', plugins:{ legend:{position:'bottom',labels:{color:'#ffffff',padding:16,font:{size:12,weight:'bold'}}}, tooltip:{...tt,callbacks:{label:ctx=>ctx.parsed.toLocaleString()+' approvals'}} } }});
+
+  const iN = ['Cognizant','Infosys','TCS','Wipro','HCL','Tech Mahindra','L&T/LTIMindtree','Syntel','Mphasis','Hexaware'];
+  const iD2 = [207652,147503,133112,77895,48714,29785,25412,24212,15835,9576];
+  mk('c_indianFirms', { type:'bar', data:{ labels:iN, datasets:[{ label:'Approvals', data:iD2, backgroundColor:iD2.map((v,i)=>`rgba(251,146,60,${0.4+(1-i/iN.length)*0.6})`), borderColor:'#ff6d00', borderWidth:1, borderRadius:4 }]}, options:{ indexAxis:'y', responsive:true, scales:{ x:{grid:{color:gc},ticks:{callback:v=>(v/1000)+'K'}}, y:{grid:{color:gc},ticks:{font:{size:11}}} }, plugins:{tooltip:{...tt,callbacks:{label:ctx=>ctx.parsed.x.toLocaleString()}}} }});
+}
+
+// ===== NATIONAL TAB =====
+function initNational() {
+  const sN = ['TX','NJ','NY','IL','MA','VA','WA','MD','PA','MI','FL','GA','NC','OH','AZ'];
+  const sA = [755344,651235,436437,319915,245552,232302,223854,217962,214189,196024,155772,141182,133942,89539,71124];
+  const sD = [66154,60379,19264,22626,13288,15088,6415,15164,14569,15849,14276,12866,7708,6073,3259];
+  mk('c_natState', { type:'bar', data:{ labels:sN, datasets:[
+    { label:'Approvals', data:sA, backgroundColor:sN.map(s=>['TX','NJ'].includes(s)?'rgba(255,23,68,0.7)':'rgba(0,136,255,0.6)'), borderColor:sN.map(s=>['TX','NJ'].includes(s)?'#ff1744':'#0088ff'), borderWidth:1, borderRadius:4 },
+    { label:'Denials', data:sD, backgroundColor:'rgba(255,109,0,0.6)', borderColor:'#ff6d00', borderWidth:1, borderRadius:4 }
+  ]}, options:{ responsive:true, scales:{ y:{grid:{color:gc},ticks:{callback:v=>(v/1000)+'K'}}, x:{grid:{color:gc}} }, plugins:{tooltip:{...tt,callbacks:{label:ctx=>ctx.dataset.label+': '+ctx.parsed.y.toLocaleString()}}} }});
+
+  const fL = ['FY09','FY10','FY11','FY12','FY13','FY14','FY15','FY16','FY17','FY18','FY19','FY20','FY21','FY22','FY23','FY24','FY25'];
+  const fA = [189116,160563,223955,226190,243250,277645,239746,297314,315514,271497,308534,341671,322028,341084,312092,320500,320144];
+  const fD = [22162,9669,10629,9365,11349,14233,11241,19810,26350,54452,61176,34489,9357,7020,9308,7006,7303];
+  mk('c_natFY', { type:'bar', data:{ labels:fL, datasets:[
+    { label:'Approvals', data:fA, backgroundColor:'rgba(0,136,255,0.6)', borderColor:'#0088ff', borderWidth:1, borderRadius:3 },
+    { label:'Denials', data:fD, backgroundColor:fD.map(v=>v>30000?'rgba(255,23,68,0.8)':'rgba(255,109,0,0.6)'), borderColor:fD.map(v=>v>30000?'#ff1744':'#ff6d00'), borderWidth:1, borderRadius:3 }
+  ]}, options:{ responsive:true, scales:{ y:{grid:{color:gc},ticks:{callback:v=>(v/1000)+'K'}}, x:{grid:{color:gc}} }, plugins:{tooltip:{...tt,callbacks:{label:ctx=>ctx.dataset.label+': '+ctx.parsed.y.toLocaleString()}}} }});
+
+
+}
+
+// ===== MASSACHUSETTS TAB =====
+function initMassachusetts() {
+  const mY = ['FY09','FY10','FY11','FY12','FY13','FY14','FY15','FY16','FY17','FY18','FY19','FY20','FY21','FY22','FY23','FY24','FY25','FY26*'];
+  const mA = [10681,8025,10951,11066,11345,12629,10742,13552,14070,16394,19932,17054,17727,18845,15514,16046,17509,3470];
+  const mD = [692,259,352,370,428,442,301,590,775,2015,3427,1293,536,450,436,368,424,130];
+
+  mk('c_maYear', { type:'bar', data:{ labels:mY, datasets:[
+    { label:'Approvals', data:mA, backgroundColor:'rgba(0,136,255,0.7)', borderColor:'#0088ff', borderWidth:1, borderRadius:3 },
+    { label:'Denials', data:mD, backgroundColor:'rgba(255,23,68,0.7)', borderColor:'#ff1744', borderWidth:1, borderRadius:3 }
+  ]}, options:{ responsive:true, interaction:{mode:'index',intersect:false}, scales:{ y:{grid:{color:gc},stacked:false}, x:{grid:{color:gc}} }, plugins:{tooltip:{...tt,callbacks:{label:ctx=>ctx.dataset.label+': '+ctx.parsed.y.toLocaleString()}}} }});
+
+  mk('c_maIndustry', { type:'doughnut', data:{ labels:['Prof/Sci (54)','Finance (52)','Healthcare (62)','Mfg (31-33)','Education (61)','Info (51)','Retail (44-45)','Other'], datasets:[{ data:[115189,26737,22513,19825,18883,12923,5680,23802], backgroundColor:['#0088ff','#00e676','#ff1744','#d500f9','#ffea00','#ff6d00','#00e5ff','#334488'], borderColor:'#050510', borderWidth:2 }]}, options:{ responsive:true, cutout:'50%', plugins:{ legend:{position:'right',labels:{color:'#ffffff',padding:10,font:{size:10,weight:'bold'}}}, tooltip:{...tt,callbacks:{label:ctx=>ctx.parsed.toLocaleString()+' approvals'}} } }});
+
+  const cN = ['Boston','Cambridge','Woburn','Waltham','Westborough','Burlington','Southborough','Somerville','Shrewsbury','Worcester','Framingham','Hopkinton','Natick','Andover','Marlborough'];
+  const cD = [89305,27399,12205,10118,8355,6460,5830,5089,5033,4399,3978,3488,3387,3377,3248];
+  mk('c_maCity', { type:'bar', data:{ labels:cN, datasets:[{ label:'Approvals', data:cD, backgroundColor:cD.map((v,i)=>`rgba(96,165,250,${0.35+(1-i/cN.length)*0.65})`), borderColor:'#0088ff', borderWidth:1, borderRadius:4 }]}, options:{ indexAxis:'y', responsive:true, scales:{ x:{grid:{color:gc},ticks:{callback:v=>(v/1000)+'K'}}, y:{grid:{color:gc},ticks:{font:{size:10}}} }, plugins:{tooltip:{...tt,callbacks:{label:ctx=>ctx.parsed.x.toLocaleString()}}} }});
+
+  const eN = ['Fidelity Investments','Virtusa','Randstad Technologies','NTT Data','MathWorks','Patni Americas','EMC Corporation','Boston Consulting Group','Wayfair','Avco Consulting','Akamai Technologies','eClinicalWorks','Randstad Tech LP','Sapient','Deloitte Consulting','Fidelity Tech Group','Harvard University','Staples','Collaborate Solutions','MIT'];
+  const eDA = [9469,7506,6023,5328,4785,3912,3707,3276,3066,2602,2542,2540,2359,2183,2009,2004,1959,1906,1893,1782];
+  const eO = [0,1,1,1,0,1,0,0,0,1,0,0,1,1,0,0,0,0,1,0];
+  mk('c_maEmployer', { type:'bar', data:{ labels:eN, datasets:[{ label:'Approvals', data:eDA, backgroundColor:eO.map(v=>v?'rgba(255,109,0,0.75)':'rgba(0,136,255,0.6)'), borderColor:eO.map(v=>v?'#ff6d00':'#0088ff'), borderWidth:1, borderRadius:4 }]}, options:{ indexAxis:'y', responsive:true, maintainAspectRatio:false, scales:{ x:{grid:{color:gc},ticks:{callback:v=>(v/1000)+'K'}}, y:{grid:{color:gc},ticks:{font:{size:9}}} }, plugins:{ tooltip:{...tt,callbacks:{label:ctx=>ctx.parsed.x.toLocaleString()}}, legend:{display:true,labels:{color:'#ffffff',font:{size:11,weight:'bold'},generateLabels:()=>[{text:'Outsourcing/Staffing',fillStyle:'rgba(255,109,0,0.75)',strokeStyle:'#ff6d00',lineWidth:2,pointStyle:'rect',fontColor:'#ffffff'},{text:'Direct Employer',fillStyle:'rgba(0,136,255,0.6)',strokeStyle:'#0088ff',lineWidth:2,pointStyle:'rect',fontColor:'#ffffff'}]}} } }});
+
+  const oY = ['FY09','FY10','FY11','FY12','FY13','FY14','FY15','FY16','FY17','FY18','FY19','FY20','FY21','FY22','FY23','FY24','FY25'];
+  const oA = [1823,1342,1696,2877,2442,2409,2321,3128,3512,4334,5689,4782,3606,2368,1916,1977,2021];
+  const oP = [17.1,16.7,15.5,26.0,21.5,19.1,21.6,23.1,25.0,26.4,28.5,28.0,20.3,12.6,12.4,12.3,11.5];
+  const oDn = [381,74,77,112,185,108,94,163,236,783,1827,665,162,117,76,66,62];
+  mk('c_maOutsource', { type:'bar', data:{ labels:oY, datasets:[
+    { label:'Outsourcer Approvals', data:oA, backgroundColor:'rgba(255,109,0,0.7)', borderColor:'#ff6d00', borderWidth:1, borderRadius:3, yAxisID:'y' },
+    { label:'Outsourcer Denials', data:oDn, backgroundColor:'rgba(255,23,68,0.7)', borderColor:'#ff1744', borderWidth:1, borderRadius:3, yAxisID:'y' },
+    { label:'% of MA Total', type:'line', data:oP, borderColor:'#ffea00', backgroundColor:'transparent', tension:0.3, pointRadius:4, pointBackgroundColor:'#ffea00', yAxisID:'y1' }
+  ]}, options:{ responsive:true, interaction:{mode:'index',intersect:false}, scales:{ y:{position:'left',grid:{color:gc},stacked:false}, y1:{position:'right',grid:{drawOnChartArea:false},title:{display:true,text:'%',color:'#ffea00'},ticks:{color:'#ffea00',callback:v=>v+'%'},min:0,max:35}, x:{grid:{color:gc}} }, plugins:{tooltip:tt} }});
+
+  const tY = ['FY09','FY10','FY11','FY12','FY13','FY14','FY15','FY16','FY17','FY18','FY19','FY20','FY21','FY22','FY23','FY24','FY25'];
+  mk('c_maType', { type:'line', data:{ labels:tY, datasets:[
+    { label:'New Employment', data:[4713,3450,4545,5639,4668,4538,3976,4335,3981,5007,6864,5178,5013,5456,4686,5801,4784], borderColor:'#0088ff', backgroundColor:'rgba(0,136,255,0.15)', fill:true, tension:0.3, pointRadius:3 },
+    { label:'Continuation', data:[3622,2684,3613,2731,3235,3610,2686,3843,4019,3441,4528,4535,4115,4019,3387,4055,5796], borderColor:'#00e676', backgroundColor:'rgba(0,230,118,0.15)', fill:true, tension:0.3, pointRadius:3 },
+    { label:'Change of Employer', data:[1594,1259,1897,1775,2179,2603,2414,2816,2471,3937,3717,3436,4830,5458,3911,2830,3049], borderColor:'#ff6d00', backgroundColor:'rgba(255,109,0,0.15)', fill:true, tension:0.3, pointRadius:3 },
+    { label:'Amended', data:[261,259,350,441,614,935,843,1611,2550,2380,2874,2428,2412,2660,2449,2047,2299], borderColor:'#d500f9', backgroundColor:'rgba(213,0,249,0.15)', fill:true, tension:0.3, pointRadius:3 }
+  ]}, options:{ responsive:true, interaction:{mode:'index',intersect:false}, scales:{ y:{grid:{color:gc}}, x:{grid:{color:gc}} }, plugins:{tooltip:tt} }});
+
+  const pD = [5510,3957,5367,5522,5271,6318,5633,7223,7655,8431,10159,8465,7710,7485,6260,6286,6635];
+  mk('c_maProf', { type:'bar', data:{ labels:tY, datasets:[{ label:'NAICS 54', data:pD, backgroundColor:pD.map(v=>v>=9000?'rgba(255,23,68,0.7)':'rgba(0,136,255,0.6)'), borderColor:pD.map(v=>v>=9000?'#ff1744':'#0088ff'), borderWidth:1, borderRadius:4 }]}, options:{ responsive:true, scales:{ y:{grid:{color:gc}}, x:{grid:{color:gc}} }, plugins:{tooltip:tt} }});
+}
+
+// ===== JOBS TAB =====
+function initJobs() {
+  mk('c_lcaWage', { type:'doughnut', data:{ labels:['Level I - Entry (18.9%)','Level II - Qualified (41.4%)','Level III - Experienced (21.1%)','Level IV - Expert (18.6%)'], datasets:[{ data:[1351,2967,1507,1331], backgroundColor:['#ff1744','#ffea00','#0088ff','#00e676'], borderColor:'#050510', borderWidth:3 }]}, options:{ responsive:true, cutout:'55%', plugins:{ legend:{position:'bottom',labels:{color:'#ffffff',padding:14,font:{size:11,weight:'bold'}}}, tooltip:{...tt,callbacks:{label:ctx=>ctx.parsed.toLocaleString()+' applications'}} } }});
+
+  const hCat = ['Direct Care Professional ($32.9K)','Rehabilitation Counselor ($47.3K)','Clinician ($47.2K)','In-Home Therapy Clinician ($47.8K)','Residential Counselor ($40.5K)','Physical Therapist ($42.9K)','Residential Instructor II ($48K)','Youth Development Pro ($37.2K)','Case Coordinator ($38.1K)','Clinician I ($55.9K)','Intensive Care Coordinator ($50.8K)'];
+  const hCnt = [18,18,9,9,7,6,5,5,4,3,3];
+  const hWg = [32932,47333,47233,47784,40486,42856,48000,37226,38093,55959,50768];
+  mk('c_lcaHS', { type:'bar', data:{ labels:hCat, datasets:[
+    { label:'LCA Applications', data:hCnt, backgroundColor:hCnt.map((v,i)=>hWg[i]<40000?'rgba(255,23,68,0.9)':hWg[i]<45000?'rgba(255,109,0,0.8)':'rgba(0,136,255,0.6)'), borderColor:hCnt.map((v,i)=>hWg[i]<40000?'#ff1744':hWg[i]<45000?'#ff6d00':'#0088ff'), borderWidth:2, borderRadius:5 }
+  ]}, options:{ indexAxis:'y', responsive:true, maintainAspectRatio:false, scales:{ x:{grid:{color:gc},title:{display:true,text:'Number of DOL LCA Applications',color:'#8090b0'}}, y:{grid:{color:gc},ticks:{font:{size:9}}} }, plugins:{ tooltip:{...tt,callbacks:{label:ctx=>{const w=hWg[ctx.dataIndex];return ctx.parsed.x+' apps — Avg wage: $'+w.toLocaleString()+'/yr';}}}, legend:{display:true,labels:{color:'#ffffff',font:{size:11,weight:'bold'},generateLabels:()=>[{text:'Below $40K (deep concern)',fillStyle:'rgba(255,23,68,0.9)',strokeStyle:'#ff1744',lineWidth:2,pointStyle:'rect',fontColor:'#ffffff'},{text:'$40K-$45K (below median)',fillStyle:'rgba(255,109,0,0.8)',strokeStyle:'#ff6d00',lineWidth:2,pointStyle:'rect',fontColor:'#ffffff'},{text:'Above $45K',fillStyle:'rgba(0,136,255,0.6)',strokeStyle:'#0088ff',lineWidth:2,pointStyle:'rect',fontColor:'#ffffff'}]}} } }});
+
+  const lL = ['Spanish Preschool Teacher\n(Su Escuela)','Direct Care Pro\n(Devereux) #1','Direct Care Pro\n(Devereux) #2','Direct Care Pro\n(Devereux) #3','Residential Instructor\n(Boston Higashi)','Youth Dev Pro\n(Hillcrest)','Job Coach\n(Devereux)','Case Coordinator\n(Devereux)','Youth Dev Pro\n(Hillcrest) #2','Youth Rehab Coord\n(Stetson School)','Direct Care Counselor\n(Wayside Youth)','Residential Counselor\n(Wayside Youth)','Residential Instructor 2\n(Boston Higashi)','Rehab Counselor\n(NE Ctr Children)','Rehab Counselor\n(NE Ctr Children) #2'];
+  const lW = [29000,30160,30451,31325,33072,35069,35131,35456,37226,42598,40040,40040,40500,46100,47000];
+  mk('c_lcaLow', { type:'bar', data:{ labels:lL, datasets:[{ label:'Annual Wage ($)', data:lW, backgroundColor:lW.map(w=>w<35000?'rgba(255,23,68,0.85)':w<42000?'rgba(255,109,0,0.7)':'rgba(255,234,0,0.6)'), borderColor:lW.map(w=>w<35000?'#ff1744':w<42000?'#ff6d00':'#ffea00'), borderWidth:1, borderRadius:4 }]}, options:{ indexAxis:'y', responsive:true, maintainAspectRatio:false, scales:{ x:{grid:{color:gc},ticks:{callback:v=>'$'+(v/1000)+'K'},min:0,max:55000}, y:{grid:{color:gc},ticks:{font:{size:8},autoSkip:false}} }, plugins:{ tooltip:{...tt,callbacks:{label:ctx=>'$'+ctx.parsed.x.toLocaleString()+'/yr — Wage Level I'}}, legend:{display:false}, annotation:{annotations:{med:{type:'line',xMin:45000,xMax:45000,borderColor:'#00e676',borderWidth:2,borderDash:[6,4],label:{display:true,content:'MA Median ~$45K',position:'start',backgroundColor:'rgba(0,230,118,0.2)',color:'#00e676',font:{size:9}}}}} } }});
+
+  const eN = ['Devereux Foundation\n(31 apps, $38.6K avg)','Gandara Mental Health\n(21 apps, $49K avg)','Wayside Youth & Family\n(13 apps, $47.3K avg)','NE Ctr for Children\n(21 apps, $47.2K avg)','Boston Higashi School\n(8 apps, $46.2K avg)','Hillcrest Educational\n(4 apps, $39.3K avg)','Home for Little Wanderers\n(3 apps, $55.9K avg)','Stetson School\n(2 apps, $44.1K avg)','Beth Israel Behavioral\n(2 apps, $77.5K avg)','Encompass Health Rehab\n(2 apps, $88K avg)','Dana-Farber Cancer Inst\n(2 apps, $82.9K avg)'];
+  const eCt = [31,21,13,21,8,4,3,2,2,2,2];
+  const eWg = [38617,49019,47302,47200,46196,39312,55959,44096,77544,88000,82929];
+  mk('c_lcaEmp', { type:'bar', data:{ labels:eN, datasets:[
+    { label:'LCA Applications', data:eCt, backgroundColor:eWg.map(w=>w<42000?'rgba(255,23,68,0.9)':w<50000?'rgba(255,109,0,0.75)':'rgba(0,136,255,0.6)'), borderColor:eWg.map(w=>w<42000?'#ff1744':w<50000?'#ff6d00':'#0088ff'), borderWidth:2, borderRadius:5 }
+  ]}, options:{ indexAxis:'y', responsive:true, maintainAspectRatio:false, scales:{ x:{grid:{color:gc},title:{display:true,text:'Number of LCA Applications',color:'#8090b0'}}, y:{grid:{color:gc},ticks:{font:{size:8},autoSkip:false}} }, plugins:{ tooltip:{...tt,callbacks:{label:ctx=>{const w=eWg[ctx.dataIndex]; return ctx.parsed.x+' apps — Avg: $'+w.toLocaleString()+'/yr';}}}, legend:{display:true,labels:{color:'#ffffff',font:{size:11,weight:'bold'},generateLabels:()=>[{text:'Avg below $42K',fillStyle:'rgba(255,23,68,0.9)',strokeStyle:'#ff1744',lineWidth:2,pointStyle:'rect',fontColor:'#ffffff'},{text:'$42K-$50K',fillStyle:'rgba(255,109,0,0.75)',strokeStyle:'#ff6d00',lineWidth:2,pointStyle:'rect',fontColor:'#ffffff'},{text:'Above $50K',fillStyle:'rgba(0,136,255,0.6)',strokeStyle:'#0088ff',lineWidth:2,pointStyle:'rect',fontColor:'#ffffff'}]}} } }});
+}
+
+// ===== EXPOSURE TAB =====
+function initExposure() {
+  mk('c_natQ', { type:'doughnut', data:{ labels:['IT Outsourcing (576,625)','Low-Skill (6,894)','Human Services (6,574)','All Other (4,186,091)'], datasets:[{ data:[576625,6894,6574,4186091], backgroundColor:['#ff6d00','#ff1744','#ffea00','#0088ff'], borderColor:'#050510', borderWidth:3 }]}, options:{ responsive:true, cutout:'55%', plugins:{ legend:{position:'bottom',labels:{color:'#ffffff',padding:14,font:{size:12,weight:'bold'}}}, tooltip:{...tt,callbacks:{label:ctx=>ctx.parsed.toLocaleString()+' approvals'}} } }});
+
+  const n2 = ['Devereux Foundation','Children\'s Nat\'l Med Ctr','Choice Hotels','Richmond Children Ctr','Cincinnati Children\'s','Domino\'s Pizza','Gandara Mental Health','Wyndham Hotels','Sea Mar Comm Health','Starwood Hotels','Highgate Hotels','Gordon Food Svc','Sally Beauty'];
+  const n2D = [1229,679,431,224,393,296,280,189,157,162,93,103,95];
+  const n2T = ['hs','hs','ls','hs','hs','ls','hs','ls','hs','ls','ls','ls','ls'];
+  mk('c_natHSLS', { type:'bar', data:{ labels:n2, datasets:[{ label:'Approvals', data:n2D, backgroundColor:n2T.map(t=>t==='hs'?'rgba(255,234,0,0.7)':'rgba(255,23,68,0.7)'), borderColor:n2T.map(t=>t==='hs'?'#ffea00':'#ff1744'), borderWidth:1, borderRadius:4 }]}, options:{ indexAxis:'y', responsive:true, scales:{ x:{grid:{color:gc}}, y:{grid:{color:gc},ticks:{font:{size:9}}} }, plugins:{ tooltip:{...tt,callbacks:{label:ctx=>ctx.parsed.x.toLocaleString()}}, legend:{display:true,labels:{color:'#ffffff',font:{size:11,weight:'bold'},generateLabels:()=>[{text:'Human Services',fillStyle:'rgba(255,234,0,0.7)',strokeStyle:'#ffea00',lineWidth:2,pointStyle:'rect',fontColor:'#ffffff'},{text:'Low-Skill Industry',fillStyle:'rgba(255,23,68,0.7)',strokeStyle:'#ff1744',lineWidth:2,pointStyle:'rect',fontColor:'#ffffff'}]}} } }});
+
+  mk('c_maQ', { type:'bar', data:{ labels:['IT Outsourcing\n(14.8%)','Healthcare/Social\n(9.2%)','Low-Skill Industries\n(3.0%)','Direct Employers\n(73.0%)'], datasets:[
+    { label:'Approvals', data:[36266,22513,7421,179352], backgroundColor:['rgba(255,109,0,0.85)','rgba(255,234,0,0.75)','rgba(255,23,68,0.85)','rgba(0,136,255,0.6)'], borderColor:['#ff6d00','#ffea00','#ff1744','#0088ff'], borderWidth:2, borderRadius:6 },
+    { label:'Denials', data:[2563,724,443,9558], backgroundColor:['rgba(255,109,0,0.3)','rgba(255,234,0,0.25)','rgba(255,23,68,0.3)','rgba(0,136,255,0.2)'], borderColor:['#ff6d00','#ffea00','#ff1744','#0088ff'], borderWidth:1, borderRadius:4 }
+  ]}, options:{ responsive:true, scales:{ y:{grid:{color:gc},ticks:{callback:v=>v>=1000?(v/1000)+'K':v}}, x:{grid:{color:gc}} }, plugins:{tooltip:{...tt,callbacks:{label:ctx=>ctx.dataset.label+': '+ctx.parsed.y.toLocaleString()}}} }});
+
+  mk('c_maDenial', { type:'bar', data:{ labels:['IT Outsourcing\n(36,266 approvals)','Healthcare/Social\n(22,513 approvals)','Low-Skill Industries\n(7,421 approvals)','Direct Employers\n(179,352 approvals)'], datasets:[{ label:'Denial Rate', data:[6.6,3.1,5.6,5.1], backgroundColor:['rgba(255,109,0,0.85)','rgba(255,234,0,0.7)','rgba(255,23,68,0.85)','rgba(0,136,255,0.5)'], borderColor:['#ff6d00','#ffea00','#ff1744','#0088ff'], borderWidth:2, borderRadius:6 }]}, options:{ responsive:true, indexAxis:'y', scales:{ x:{grid:{color:gc},ticks:{callback:v=>v+'%'},max:10}, y:{grid:{color:gc}} }, plugins:{tooltip:{...tt,callbacks:{label:ctx=>ctx.parsed.x+'% denial rate'}},legend:{display:false}} }});
+
+  // MA NAICS industry breakdown
+  mk('c_maNaics', { type:'bar', data:{ labels:['Prof/Sci\n(46.9%)','Finance\n(10.9%)','Healthcare\n(9.2%)','Mfg\n(8.1%)','Education\n(7.7%)','Info\n(5.3%)','Retail\n(2.3%)','Admin\n(0.9%)','Other Svc\n(0.4%)','Wholesale\n(0.3%)','Accomm/Food\n(0.2%)','Arts/Ent\n(0.1%)'], datasets:[{ label:'Approvals', data:[115189,26737,22513,19825,18883,12923,5680,2157,995,724,402,344], backgroundColor:['rgba(0,136,255,0.7)','rgba(0,230,118,0.6)','rgba(255,234,0,0.7)','rgba(213,0,249,0.6)','rgba(0,229,255,0.6)','rgba(0,136,255,0.5)','rgba(255,23,68,0.7)','rgba(128,144,176,0.5)','rgba(255,109,0,0.6)','rgba(128,144,176,0.4)','rgba(255,23,68,0.8)','rgba(255,109,0,0.7)'], borderColor:['#0088ff','#00e676','#ffea00','#d500f9','#00e5ff','#0088ff','#ff1744','#8090b0','#ff6d00','#8090b0','#ff1744','#ff6d00'], borderWidth:2, borderRadius:4 }]}, options:{ responsive:true, scales:{ y:{grid:{color:gc},ticks:{callback:v=>v>=1000?(v/1000)+'K':v}}, x:{grid:{color:gc},ticks:{font:{size:8}}} }, plugins:{tooltip:{...tt,callbacks:{label:ctx=>ctx.parsed.y.toLocaleString()+' approvals'}},legend:{display:false}} }});
+
+  // === MA Outsourcing Firms by Name ===
+  const osN = ['Virtusa Corporation','Randstad Technologies LLC','NTT Data Inc','Patni Americas Inc','Avco Consulting Inc','Randstad Technologies LP','Sapient Corporation','Collaborate Solutions Inc','Randstad Digital LLC','NTT Data Services LLC'];
+  const osA = [7506,6023,5328,3912,2602,2359,2183,1893,1115,1051];
+  const osD = [389,227,272,602,284,69,230,258,29,90];
+  mk('c_maQOutsource', { type:'bar', data:{ labels:osN, datasets:[
+    { label:'Approvals', data:osA, backgroundColor:'rgba(255,109,0,0.75)', borderColor:'#ff6d00', borderWidth:1, borderRadius:4 },
+    { label:'Denials', data:osD, backgroundColor:'rgba(255,23,68,0.7)', borderColor:'#ff1744', borderWidth:1, borderRadius:4 }
+  ]}, options:{ indexAxis:'y', responsive:true, maintainAspectRatio:false, scales:{ x:{grid:{color:gc},ticks:{callback:v=>(v/1000)+'K'},stacked:false}, y:{grid:{color:gc},ticks:{font:{size:9}}} }, plugins:{ tooltip:{...tt,callbacks:{label:ctx=>ctx.dataset.label+': '+ctx.parsed.x.toLocaleString()}}, legend:{display:true} } }});
+
+  // === MA Human Services Employers ===
+  const hsN = ['Devereux Foundation','Boston Higashi School','Hillcrest Educational Ctrs','Gandara Mental Health Ctr','NE Center for Children','Bright Horizons Children\'s','Wayside Youth & Family','Eliot Community Human Svcs','N Suffolk Mental Health','Community Health Connections','Behavioral Health Network','Dimock Community Health Ctr','Hillcrest Dental Care','NE Center for Children (alt)','South Shore Mental Health','Lowell Community Health Ctr'];
+  const hsA = [575,295,222,195,150,100,52,40,30,30,28,22,21,20,19,18];
+  const hsDn = [96,8,12,8,4,3,5,0,0,0,1,1,2,1,0,0];
+  mk('c_maQHuman', { type:'bar', data:{ labels:hsN, datasets:[
+    { label:'Approvals', data:hsA, backgroundColor:'rgba(255,234,0,0.7)', borderColor:'#ffea00', borderWidth:1, borderRadius:4 },
+    { label:'Denials', data:hsDn, backgroundColor:'rgba(255,23,68,0.6)', borderColor:'#ff1744', borderWidth:1, borderRadius:4 }
+  ]}, options:{ indexAxis:'y', responsive:true, maintainAspectRatio:false, scales:{ x:{grid:{color:gc},stacked:false}, y:{grid:{color:gc},ticks:{font:{size:9}}} }, plugins:{ tooltip:{...tt,callbacks:{label:ctx=>ctx.dataset.label+': '+ctx.parsed.x.toLocaleString()}}, legend:{display:true} } }});
+
+  // === MA Low-Skill Employers (enriched from USCIS data) ===
+  const lsN = ['Wayfair LLC (Retail)','Staples Inc (Retail)','TJX Companies (Retail)','BJ\'s Wholesale (Retail, combined)','Home for Little Wanderers (Svc)','DK Crown Holdings (Arts)','USR Parent Inc (Retail)','Oxfam America (Svc)','Open Avenues Foundation (Svc)','DraftKings Inc (Arts)','Intl Rescue Committee (Svc)','Retail Business Svcs (Retail)','Jill Acquisition/J.Jill (Retail)','Dunkin\' Brands (Food)','Museum of Fine Arts (Arts)','Dream Venture Labs (Svc)','Jamsan Hotel Mgmt (Hotel)','Sears Holdings (Retail)','Talbots Inc (Retail)','Jiten Hotel Mgmt (Hotel)'];
+  const lsA = [2531,1709,377,313,124,99,96,95,76,68,59,46,42,40,39,36,22,18,17,17];
+  const lsNE = [921,318,27,33,81,23,15,36,71,19,37,23,7,1,22,34,5,6,4,5];
+  const lsCE = [757,519,129,108,6,34,10,1,3,20,1,17,10,21,1,2,1,3,5,0];
+  mk('c_maQLowSkill', { type:'bar', data:{ labels:lsN, datasets:[
+    { label:'Total Approvals', data:lsA, backgroundColor:lsA.map(v=>v>=500?'rgba(255,23,68,0.9)':v>=50?'rgba(255,109,0,0.75)':'rgba(255,234,0,0.6)'), borderColor:lsA.map(v=>v>=500?'#ff1744':v>=50?'#ff6d00':'#ffea00'), borderWidth:2, borderRadius:5 },
+    { label:'Change of Employer', data:lsCE, backgroundColor:'rgba(213,0,249,0.5)', borderColor:'#d500f9', borderWidth:1, borderRadius:3 }
+  ]}, options:{ indexAxis:'y', responsive:true, maintainAspectRatio:false, scales:{ x:{grid:{color:gc},ticks:{callback:v=>v>=1000?(v/1000)+'K':v}}, y:{grid:{color:gc},ticks:{font:{size:8}}} }, plugins:{tooltip:{...tt,callbacks:{label:ctx=>ctx.dataset.label+': '+ctx.parsed.x.toLocaleString()}},legend:{display:true}} }});
+
+  // === DUNKIN' BRANDS CASE STUDY ===
+  const dkYrs = ['FY09','FY10','FY11','FY12','FY13','FY14','FY15','FY16','FY17','FY18','FY19','FY20','FY21','FY22'];
+  const dkCE = [1,1,2,3,1,0,1,2,2,8,3,14,4,0];
+  const dkNE = [0,0,2,1,1,1,0,0,0,0,1,0,0,0];
+  const dkCont = [0,0,1,0,1,2,2,0,0,1,3,3,2,2];
+  mk('c_dunkin', { type:'bar', data:{ labels:dkYrs, datasets:[
+    { label:'Change of Employer (poached from H-1B pool)', data:dkCE, backgroundColor:'rgba(255,23,68,0.85)', borderColor:'#ff1744', borderWidth:2, borderRadius:4 },
+    { label:'New Employment (actually sponsored)', data:dkNE, backgroundColor:'rgba(0,136,255,0.7)', borderColor:'#0088ff', borderWidth:2, borderRadius:4 },
+    { label:'Continuation (renewal)', data:dkCont, backgroundColor:'rgba(255,234,0,0.5)', borderColor:'#ffea00', borderWidth:1, borderRadius:4 }
+  ]}, options:{ responsive:true, maintainAspectRatio:false, scales:{ y:{grid:{color:gc},stacked:true,title:{display:true,text:'H-1B Approvals',color:'#8090b0'}}, x:{grid:{color:gc},stacked:true} }, plugins:{tooltip:{...tt,callbacks:{label:ctx=>ctx.dataset.label.split('(')[0].trim()+': '+ctx.parsed.y}}, legend:{display:true,labels:{color:'#ffffff',font:{size:10}}}, annotation:{annotations:{peak:{type:'label',xValue:'FY20',yValue:19,backgroundColor:'rgba(255,23,68,0.25)',borderColor:'#ff1744',borderWidth:1,color:'#ff1744',content:['Peak: 19 approvals','14 were CE transfers'],font:{size:9,weight:'bold'},padding:5}}}} }});
+
+  // === HOUSEHOLD BRANDS ===
+  const brN = ['Starbucks','Marriott Hotels','Hilton Hotels','Choice Hotels','Domino\'s Pizza','Wyndham Hotels','McDonald\'s','Starwood Hotels','Burger King','Dunkin\' (All)','Darden (Olive Garden)','Subway','Taco Bell'];
+  const brApp = [1485,771,661,486,443,431,323,252,97,95,87,61,53];
+  const brCE = [508,207,206,153,143,97,158,76,23,42,28,10,23];
+  const brNE = [174,123,126,55,76,64,59,53,45,6,4,18,6];
+  const brCEpct = brApp.map((a,i)=>Math.round(brCE[i]*100/a));
+  mk('c_brands', { type:'bar', data:{ labels:brN, datasets:[
+    { label:'Change of Employer (from H-1B pool)', data:brCE, backgroundColor:'rgba(255,23,68,0.8)', borderColor:'#ff1744', borderWidth:2, borderRadius:4 },
+    { label:'New Employment (sponsored from abroad)', data:brNE, backgroundColor:'rgba(0,136,255,0.7)', borderColor:'#0088ff', borderWidth:2, borderRadius:4 },
+    { label:'Other (continuation, amended)', data:brApp.map((a,i)=>a-brCE[i]-brNE[i]), backgroundColor:'rgba(255,234,0,0.4)', borderColor:'#ffea00', borderWidth:1, borderRadius:4 }
+  ]}, options:{ indexAxis:'y', responsive:true, maintainAspectRatio:false, scales:{ x:{grid:{color:gc},stacked:true,ticks:{callback:v=>v>=1000?(v/1000)+'K':v}}, y:{grid:{color:gc},stacked:true,ticks:{font:{size:10}}} }, plugins:{tooltip:{...tt,callbacks:{label:ctx=>{const i=ctx.dataIndex;return ctx.dataset.label.split('(')[0].trim()+': '+ctx.parsed.x+' (CE: '+brCEpct[i]+'%)';}}}, legend:{display:true,labels:{color:'#ffffff',font:{size:10}}}} }});
+}
+
+// ===== PIPELINE TAB =====
+function initPipeline() {
+  // National filing categories doughnut
+  mk('c_pipeCat', { type:'doughnut', data:{ labels:['New Employment (34.5%)','Continuation (26.9%)','Change of Employer (16.7%)','Amended (15.0%)','Change Same Employer (6.6%)','Concurrent (0.3%)'], datasets:[{ data:[1645521,1284426,797541,716409,316740,15547], backgroundColor:['#0088ff','#00e676','#ff6d00','#d500f9','#ffea00','#334488'], borderColor:'#050510', borderWidth:3 }]}, options:{ responsive:true, cutout:'55%', plugins:{ legend:{position:'bottom',labels:{color:'#ffffff',padding:10,font:{size:10,weight:'bold'}}}, tooltip:{...tt,callbacks:{label:ctx=>ctx.label.split('(')[0].trim()+': '+ctx.parsed.toLocaleString()+' approvals'}} } }});
+
+  // New Employment vs Change of Employer doughnut
+  mk('c_pipeNvC', { type:'doughnut', data:{ labels:['New Employment — Brought from abroad','Change of Employer — Recycled from pool','All Other Categories'], datasets:[{ data:[1645521,797541,2333122], backgroundColor:['#0088ff','#ff1744','#334155'], borderColor:'#050510', borderWidth:3, hoverOffset:8 }]}, options:{ responsive:true, cutout:'55%', plugins:{ legend:{position:'bottom',labels:{color:'#ffffff',padding:10,font:{size:10,weight:'bold'}}}, tooltip:{...tt,callbacks:{label:ctx=>ctx.parsed.toLocaleString()+' approvals'}} } }});
+
+  // Yearly trend line chart
+  const ptY = ['FY09','FY10','FY11','FY12','FY13','FY14','FY15','FY16','FY17','FY18','FY19','FY20','FY21','FY22','FY23','FY24','FY25'];
+  const ptNE = [81913,70109,94740,117861,107843,109168,93188,85782,77961,71702,101105,96487,99475,106819,98043,116275,92084];
+  const ptCE = [25910,22050,31997,30250,34381,41526,41216,46587,40329,53738,51604,56957,65127,88312,59345,49051,50047];
+  const ptPct = [13.7,13.7,14.3,13.4,14.1,15.0,17.2,15.7,12.8,19.8,16.7,16.7,20.2,25.9,19.0,15.3,15.6];
+  mk('c_pipeTrend', { type:'bar', data:{ labels:ptY, datasets:[
+    { label:'New Employment', data:ptNE, backgroundColor:'rgba(0,136,255,0.6)', borderColor:'#0088ff', borderWidth:1, borderRadius:3, yAxisID:'y' },
+    { label:'Change of Employer', data:ptCE, backgroundColor:'rgba(255,23,68,0.75)', borderColor:'#ff1744', borderWidth:1, borderRadius:3, yAxisID:'y' },
+    { label:'CE % of Total', type:'line', data:ptPct, borderColor:'#ffea00', backgroundColor:'transparent', tension:0.3, pointRadius:4, pointBackgroundColor:ptPct.map(v=>v>=20?'#ff1744':'#ffea00'), borderWidth:2.5, yAxisID:'y1' }
+  ]}, options:{ responsive:true, interaction:{mode:'index',intersect:false}, scales:{ y:{position:'left',grid:{color:gc},ticks:{callback:v=>(v/1000)+'K'}}, y1:{position:'right',grid:{drawOnChartArea:false},title:{display:true,text:'CE %',color:'#ffea00'},ticks:{color:'#ffea00',callback:v=>v+'%'},min:0,max:30}, x:{grid:{color:gc}} }, plugins:{tooltip:{...tt,callbacks:{label:ctx=>{if(ctx.dataset.label==='CE % of Total')return ctx.parsed.y+'%';return ctx.dataset.label+': '+ctx.parsed.y.toLocaleString();}}}, annotation:{annotations:{peak:{type:'label',xValue:'FY22',yValue:27,backgroundColor:'rgba(255,23,68,0.15)',borderColor:'#ff1744',borderWidth:1,color:'#ff1744',content:['Peak: 25.9%','88,312 transfers'],font:{size:10},padding:6,yAdjust:-20}}}} }});
+
+  // Top recyclers nationally — companies with highest CE%
+  const rcN = ['Sapphire Technologies LP','Kforce Inc','Compunnel Software Group','Randstad Technologies LP','Fidelity Investments','Amazon COM Services Inc','Wal-Mart Associates Inc','JPMorgan Chase & Co','State Street Bank','Wayfair LLC','JPMorgan Chase Co','Amazon Corporate LLC','Google Inc','Amazon Web Services Inc','Staples Inc','Wal-Mart Associates Inc (alt)','Virtusa Corporation','Oracle America Inc','Microsoft Corporation','Amazon.com Services LLC'];
+  const rcCE = [62.1,44.3,41.1,56.9,39.7,38.2,38.3,36.0,37.3,33.0,32.7,26.3,24.9,32.4,31.4,27.9,25.1,19.5,21.4,20.0];
+  const rcTot = [446,9022,10724,2359,9489,12702,10796,11520,1695,3066,12567,16198,12213,18144,1906,11453,7506,12133,54488,25088];
+  mk('c_pipeRecyclers', { type:'bar', data:{ labels:rcN, datasets:[
+    { label:'CE % of Approvals', data:rcCE, backgroundColor:rcCE.map(v=>v>=40?'rgba(255,23,68,0.85)':v>=30?'rgba(255,109,0,0.75)':'rgba(255,234,0,0.6)'), borderColor:rcCE.map(v=>v>=40?'#ff1744':v>=30?'#ff6d00':'#ffea00'), borderWidth:1, borderRadius:4 }
+  ]}, options:{ indexAxis:'y', responsive:true, maintainAspectRatio:false, scales:{ x:{grid:{color:gc},ticks:{callback:v=>v+'%'},max:70,title:{display:true,text:'% of approvals from existing H-1B pool'}}, y:{grid:{color:gc},ticks:{font:{size:9}}} }, plugins:{ tooltip:{...tt,callbacks:{label:ctx=>ctx.parsed.x+'% CE ('+rcTot[ctx.dataIndex].toLocaleString()+' total approvals)'}}, legend:{display:false}, annotation:{annotations:{line30:{type:'line',xMin:30,xMax:30,borderColor:'rgba(255,23,68,0.4)',borderWidth:1,borderDash:[4,4]}}} } }});
+
+  // MA top companies by CE
+  const maN = ['Fidelity Investments','Randstad Technologies LLC','Virtusa Corporation','Randstad Technologies LP','Wayfair LLC','EMC Corporation','State Street Bank','Staples Inc','Randstad Digital LLC','NTT Data Inc','Sapient Corporation','Akamai Technologies','Fidelity Tech Group','Thermo Fisher Scientific','Boston Consulting Group'];
+  const maCE = [3761,2473,1882,1342,1012,828,633,599,594,552,532,500,481,453,414];
+  const maNE = [1099,548,1516,116,975,956,344,339,211,1513,328,592,199,393,1774];
+  const maPct = [39.7,41.1,25.1,56.9,33.0,22.3,37.3,31.4,53.3,10.4,24.4,19.7,24.0,27.3,12.6];
+  mk('c_pipeMA', { type:'bar', data:{ labels:maN, datasets:[
+    { label:'Change of Employer', data:maCE, backgroundColor:'rgba(255,23,68,0.75)', borderColor:'#ff1744', borderWidth:1, borderRadius:4 },
+    { label:'New Employment', data:maNE, backgroundColor:'rgba(0,136,255,0.6)', borderColor:'#0088ff', borderWidth:1, borderRadius:4 }
+  ]}, options:{ indexAxis:'y', responsive:true, maintainAspectRatio:false, scales:{ x:{grid:{color:gc},ticks:{callback:v=>(v/1000)+'K'},stacked:false}, y:{grid:{color:gc},ticks:{font:{size:9}}} }, plugins:{ tooltip:{...tt,callbacks:{label:ctx=>ctx.dataset.label+': '+ctx.parsed.x.toLocaleString()+' ('+maPct[ctx.dataIndex]+'% CE)'}}, legend:{display:true} } }});
+}
+
+// ===== THE LAW TAB =====
+function initLaw() {
+  // Visa cap over time
+  const capYrs = ['1990','1992','1994','1996','1998','1999','2000','2001','2002','2003','2004','2006','2008','2010','2012','2014','2016','2018','2020','2022','2024','2026'];
+  const capBase = [65,65,65,65,115,115,195,195,195,107.5,65,65,65,65,65,65,65,65,65,65,65,65];
+  const capMast = [0,0,0,0,0,0,0,0,0,0,20,20,20,20,20,20,20,20,20,20,20,20];
+  mk('c_lawCap', { type:'line', data:{ labels:capYrs, datasets:[
+    { label:'Base Cap (K)', data:capBase, borderColor:'#0088ff', backgroundColor:'rgba(0,136,255,0.15)', fill:true, tension:0.1, pointRadius:5, pointBackgroundColor:capBase.map(v=>v>=115?'#ff1744':'#0088ff'), borderWidth:3 },
+    { label:"Master's Exemption (K)", data:capMast, borderColor:'#00e676', backgroundColor:'rgba(0,230,118,0.1)', fill:true, tension:0.1, pointRadius:4, borderWidth:2 }
+  ]}, options:{ responsive:true, interaction:{mode:'index',intersect:false}, scales:{ y:{grid:{color:'rgba(255,255,255,0.05)'},min:0,max:220,title:{display:true,text:'Thousands',color:'#8090b0'}}, x:{grid:{color:'rgba(255,255,255,0.05)'}} }, plugins:{tooltip:tt, annotation:{annotations:{
+    ac21:{type:'label',xValue:'2000',yValue:210,backgroundColor:'rgba(255,23,68,0.2)',borderColor:'#ff1744',borderWidth:1,color:'#ff1744',content:['AC21: 195K','Floodgates Open'],font:{size:10,weight:'bold'},padding:6},
+    reform:{type:'label',xValue:'2004',yValue:120,backgroundColor:'rgba(0,136,255,0.2)',borderColor:'#0088ff',borderWidth:1,color:'#0088ff',content:['Reform Act','Back to 65K'],font:{size:10},padding:6}
+  }}} }});
+
+  // Fee evolution
+  const feeYrs = ['1990','1998','2004','2010','2015','2020','2024','2025'];
+  const feeTot = [0,0.5,2.5,3.0,3.5,3.5,3.5,100];
+  mk('c_lawFee', { type:'bar', data:{ labels:feeYrs, datasets:[{ label:'Total Cost per Petition ($K)', data:feeTot, backgroundColor:feeTot.map(v=>v>=50?'rgba(255,23,68,0.9)':v>=2?'rgba(255,109,0,0.7)':'rgba(0,136,255,0.5)'), borderColor:feeTot.map(v=>v>=50?'#ff1744':v>=2?'#ff6d00':'#0088ff'), borderWidth:2, borderRadius:6 }]}, options:{ responsive:true, scales:{ y:{grid:{color:'rgba(255,255,255,0.05)'},title:{display:true,text:'Cost ($K)',color:'#8090b0'}}, x:{grid:{color:'rgba(255,255,255,0.05)'}} }, plugins:{tooltip:{...tt,callbacks:{label:ctx=>'$'+ctx.parsed.y.toLocaleString()+'K per petition'}}, annotation:{annotations:{shock:{type:'label',xValue:'2025',yValue:110,backgroundColor:'rgba(255,23,68,0.3)',borderColor:'#ff1744',borderWidth:2,color:'#ff1744',content:['$100K','20-50x INCREASE'],font:{size:11,weight:'bold'},padding:8}}}} }});
+
+  // Wage suppression
+  mk('c_lawWage', { type:'bar', data:{ labels:['Level I\n(Entry)','Level II\n(Qualified)','Level III\n(Experienced)','Level IV\n(Expert)'], datasets:[
+    { label:'Discount vs Median', data:[-36,-18,0,17], backgroundColor:['rgba(255,23,68,0.9)','rgba(255,109,0,0.8)','rgba(0,136,255,0.5)','rgba(0,230,118,0.6)'], borderColor:['#ff1744','#ff6d00','#0088ff','#00e676'], borderWidth:2, borderRadius:6 }
+  ]}, options:{ responsive:true, scales:{ y:{grid:{color:'rgba(255,255,255,0.05)'},ticks:{callback:v=>v+'%'},title:{display:true,text:'vs. Median Wage',color:'#8090b0'}}, x:{grid:{color:'rgba(255,255,255,0.05)'}} }, plugins:{tooltip:{...tt,callbacks:{label:ctx=>ctx.parsed.y+'% vs median wage'}}, annotation:{annotations:{zero:{type:'line',yMin:0,yMax:0,borderColor:'rgba(255,255,255,0.3)',borderWidth:1,borderDash:[4,4]}, pct:{type:'label',xValue:'Level I\n(Entry)',yValue:-42,backgroundColor:'rgba(255,23,68,0.25)',color:'#ff1744',content:'60% of H-1B jobs below median',font:{size:9},padding:4}}}} }});
+
+  // India dominance over time
+  const indYrs = ['2001','2003','2005','2007','2009','2011','2013','2015','2016','2018','2020','2022','2024'];
+  const indPct = [41,36,43,52,54,58,64,69,80,74,75,73,71];
+  mk('c_lawIndia', { type:'line', data:{ labels:indYrs, datasets:[{ label:"India's Share (%)", data:indPct, borderColor:'#ff6d00', backgroundColor:'rgba(255,109,0,0.15)', fill:true, tension:0.3, pointRadius:6, pointBackgroundColor:indPct.map(v=>v>=70?'#ff1744':v>=50?'#ff6d00':'#ffea00'), borderWidth:3 }]}, options:{ responsive:true, scales:{ y:{grid:{color:'rgba(255,255,255,0.05)'},min:20,max:90,ticks:{callback:v=>v+'%'}}, x:{grid:{color:'rgba(255,255,255,0.05)'}} }, plugins:{tooltip:{...tt,callbacks:{label:ctx=>ctx.parsed.y+'%'}}, annotation:{annotations:{peak:{type:'label',xValue:'2016',yValue:86,backgroundColor:'rgba(255,23,68,0.25)',borderColor:'#ff1744',borderWidth:1,color:'#ff1744',content:'Peak: 80%',font:{size:10,weight:'bold'},padding:5}}}} }});
+
+  // Research impact
+  mk('c_lawImpact', { type:'bar', data:{ labels:['CS Wage Loss\n(Low: NBER)','CS Wage Loss\n(High: NBER)','CS Jobs Lost\n(Low: NBER)','CS Jobs Lost\n(High: NBER)','H-1B Pay Gap\n(Low: EPI)','H-1B Pay Gap\n(High: EPI)'], datasets:[{ label:'Impact %', data:[2.6,5.1,6.1,10.8,5,10], backgroundColor:['rgba(255,23,68,0.6)','rgba(255,23,68,0.9)','rgba(255,109,0,0.6)','rgba(255,109,0,0.9)','rgba(213,0,249,0.5)','rgba(213,0,249,0.8)'], borderColor:['#ff1744','#ff1744','#ff6d00','#ff6d00','#d500f9','#d500f9'], borderWidth:2, borderRadius:6 }]}, options:{ indexAxis:'y', responsive:true, maintainAspectRatio:false, scales:{ x:{grid:{color:'rgba(255,255,255,0.05)'},ticks:{callback:v=>v+'%'},max:14,title:{display:true,text:'Impact (%)',color:'#8090b0'}}, y:{grid:{color:'rgba(255,255,255,0.05)'},ticks:{font:{size:9}}} }, plugins:{tooltip:{...tt,callbacks:{label:ctx=>ctx.parsed.x+'%'}}, legend:{display:true,labels:{color:'#ffffff',font:{size:10},generateLabels:()=>[{text:'NBER Working Paper #23153 (Bound et al.)',fillStyle:'rgba(255,23,68,0.7)',strokeStyle:'#ff1744',lineWidth:2,pointStyle:'rect',fontColor:'#ffffff'},{text:'EPI: H-1B Visas & Prevailing Wages (2020)',fillStyle:'rgba(213,0,249,0.7)',strokeStyle:'#d500f9',lineWidth:2,pointStyle:'rect',fontColor:'#ffffff'}]}}} }});
+}
+
+function initTab(tab) {
+  switch(tab) {
+    case 'overview': initOverview(); break;
+    case 'h1b': initH1b(); break;
+    case 'national': initNational(); break;
+    case 'massachusetts': initMassachusetts(); break;
+    case 'jobs': initJobs(); break;
+    case 'exposure': initExposure(); break;
+    case 'pipeline': initPipeline(); break;
+    case 'law': initLaw(); break;
+      case 'ai': initAI(); break;
+  }
+}
+
+// ===== THE AI ERA TAB =====
+function initAI() {
+  mk('c_aiDev', { type:'bar', data:{ labels:['Task Completion\nSpeed','Code Written\nPer Day','Bug Detection\nRate','Code Review\nTime','Test Coverage\nGeneration','Documentation\nSpeed'], datasets:[
+    { label:'Without AI (baseline)', data:[100,100,100,100,100,100], backgroundColor:'rgba(128,144,176,0.4)', borderColor:'#8090b0', borderWidth:1, borderRadius:4 },
+    { label:'With AI Tools (2025)', data:[156,140,135,250,180,200], backgroundColor:'rgba(0,229,255,0.7)', borderColor:'#00e5ff', borderWidth:2, borderRadius:4 }
+  ]}, options:{ responsive:true, scales:{ y:{grid:{color:gc},title:{display:true,text:'% (100 = baseline without AI)',color:'#8090b0'},ticks:{callback:v=>v+'%'}}, x:{grid:{color:gc},ticks:{font:{size:9}}} }, plugins:{tooltip:{...tt,callbacks:{label:ctx=>ctx.dataset.label+': '+ctx.parsed.y+'%'}}, legend:{display:true,labels:{color:'#ffffff'}}} }});
+
+  const itFirms = ['TCS','Infosys','Wipro'];
+  mk('c_aiIndiaIT', { type:'bar', data:{ labels:itFirms, datasets:[
+    { label:'Headcount Cut (FY24)', data:[13249,25994,24516], backgroundColor:['rgba(255,23,68,0.8)','rgba(255,23,68,0.7)','rgba(255,23,68,0.6)'], borderColor:'#ff1744', borderWidth:2, borderRadius:6, yAxisID:'y' },
+    { label:'Revenue Growth %', type:'line', data:[6.8,4.7,3.2], borderColor:'#00e676', backgroundColor:'transparent', tension:0.3, pointRadius:7, pointBackgroundColor:'#00e676', borderWidth:3, yAxisID:'y1' },
+    { label:'Profit Growth %', type:'line', data:[10.5,8.9,5.1], borderColor:'#ffea00', backgroundColor:'transparent', tension:0.3, pointRadius:7, pointBackgroundColor:'#ffea00', borderWidth:3, yAxisID:'y1' }
+  ]}, options:{ responsive:true, maintainAspectRatio:false, scales:{ y:{position:'left',grid:{color:gc},title:{display:true,text:'Jobs Cut',color:'#ff1744'},ticks:{color:'#ff1744'}}, y1:{position:'right',grid:{drawOnChartArea:false},title:{display:true,text:'Growth %',color:'#00e676'},ticks:{color:'#00e676',callback:v=>v+'%'},min:0,max:15}, x:{grid:{color:gc}} }, plugins:{tooltip:tt, legend:{display:true,labels:{color:'#ffffff'}}} }});
+
+  mk('c_aiBPO', { type:'line', data:{ labels:['2020','2022','2024','2026','2028','2030'], datasets:[{ label:'India BPO Workers (Millions)', data:[4.0,3.8,3.5,2.8,1.8,0.9], borderColor:'#ff1744', backgroundColor:'rgba(255,23,68,0.15)', fill:true, tension:0.3, pointRadius:7, pointBackgroundColor:['#ffea00','#ffea00','#ff6d00','#ff6d00','#ff1744','#ff1744'], borderWidth:3 }]}, options:{ responsive:true, scales:{ y:{grid:{color:gc},title:{display:true,text:'Millions of Workers',color:'#8090b0'},min:0,max:5}, x:{grid:{color:gc}} }, plugins:{tooltip:tt, annotation:{annotations:{now:{type:'line',xMin:'2024',xMax:'2024',borderColor:'rgba(0,229,255,0.5)',borderWidth:2,borderDash:[6,4],label:{display:true,content:'Now',position:'start',backgroundColor:'rgba(0,229,255,0.2)',color:'#00e5ff',font:{size:10}}}, collapse:{type:'label',xValue:'2030',yValue:1.5,backgroundColor:'rgba(255,23,68,0.25)',borderColor:'#ff1744',borderWidth:1,color:'#ff1744',content:['-75%','from peak'],font:{size:11,weight:'bold'},padding:6}}}} }});
+
+  const tasks = ['Software Testing','Code Review','Data Entry/Processing','Customer Service (L1)','Business Analysis','Report Generation','IT Help Desk','QA Automation','Documentation','Database Admin'];
+  const autoLevel = [85,75,90,80,60,85,70,80,75,55];
+  mk('c_aiTasks', { type:'bar', data:{ labels:tasks, datasets:[{ label:'% Automatable by AI (2026)', data:autoLevel, backgroundColor:autoLevel.map(v=>v>=80?'rgba(255,23,68,0.85)':v>=65?'rgba(255,109,0,0.75)':'rgba(255,234,0,0.6)'), borderColor:autoLevel.map(v=>v>=80?'#ff1744':v>=65?'#ff6d00':'#ffea00'), borderWidth:2, borderRadius:5 }]}, options:{ indexAxis:'y', responsive:true, maintainAspectRatio:false, scales:{ x:{grid:{color:gc},ticks:{callback:v=>v+'%'},max:100,title:{display:true,text:'Automation Potential (%)',color:'#8090b0'}}, y:{grid:{color:gc},ticks:{font:{size:10}}} }, plugins:{tooltip:{...tt,callbacks:{label:ctx=>ctx.parsed.x+'% automatable'}}, legend:{display:true,labels:{color:'#ffffff',font:{size:10},generateLabels:()=>[{text:'80%+ (fully automatable)',fillStyle:'rgba(255,23,68,0.85)',strokeStyle:'#ff1744',lineWidth:2,pointStyle:'rect',fontColor:'#ffffff'},{text:'65-79% (mostly automatable)',fillStyle:'rgba(255,109,0,0.75)',strokeStyle:'#ff6d00',lineWidth:2,pointStyle:'rect',fontColor:'#ffffff'},{text:'<65% (partially automatable)',fillStyle:'rgba(255,234,0,0.6)',strokeStyle:'#ffea00',lineWidth:2,pointStyle:'rect',fontColor:'#ffffff'}]}}} }});
+
+  mk('c_aiBPOModel', { type:'bar', data:{ labels:['Pay-Per-Worker\n(Current H-1B Model)','Pay-Per-Result\n(AI Does the Work)','AI + Human\n(Shared Model)','Hybrid\nContracts'], datasets:[
+    { label:'Current (2024)', data:[42,12,8,38], backgroundColor:'rgba(128,144,176,0.5)', borderColor:'#8090b0', borderWidth:1, borderRadius:4 },
+    { label:'Projected (2027)', data:[28,22,17,33], backgroundColor:'rgba(0,229,255,0.7)', borderColor:'#00e5ff', borderWidth:2, borderRadius:4 }
+  ]}, options:{ responsive:true, scales:{ y:{grid:{color:gc},ticks:{callback:v=>v+'%'},title:{display:true,text:'% of BPO Contracts',color:'#8090b0'}}, x:{grid:{color:gc},ticks:{font:{size:9}}} }, plugins:{tooltip:{...tt,callbacks:{label:ctx=>ctx.dataset.label+': '+ctx.parsed.y+'%'}}, legend:{display:true,labels:{color:'#ffffff'}}} }});
+
+  mk('c_aiMath', { type:'bar', data:{ labels:['Current H-1B\nApprovals/Year','Outsourcing-Driven\n(est. 40%)','AI Eliminates 30%\nof Outsourcing Need','AI Eliminates 50%\nof Outsourcing Need','Remaining Need\n(Conservative)','Remaining Need\n(Aggressive)'], datasets:[{ label:'Approvals (K)', data:[400,160,112,80,288,240], backgroundColor:['rgba(0,136,255,0.6)','rgba(255,109,0,0.7)','rgba(255,23,68,0.6)','rgba(255,23,68,0.9)','rgba(0,230,118,0.5)','rgba(0,230,118,0.7)'], borderColor:['#0088ff','#ff6d00','#ff1744','#ff1744','#00e676','#00e676'], borderWidth:2, borderRadius:6 }]}, options:{ responsive:true, scales:{ y:{grid:{color:gc},ticks:{callback:v=>v+'K'},title:{display:true,text:'Approvals per Year (K)',color:'#8090b0'}}, x:{grid:{color:gc},ticks:{font:{size:8}}} }, plugins:{tooltip:{...tt,callbacks:{label:ctx=>ctx.parsed.y+'K approvals/year'}}, legend:{display:false}, annotation:{annotations:{line:{type:'line',yMin:85,yMax:85,borderColor:'rgba(0,229,255,0.4)',borderWidth:1,borderDash:[6,4],label:{display:true,content:'Original 1990 Cap: 65K',position:'start',backgroundColor:'rgba(0,229,255,0.2)',color:'#00e5ff',font:{size:9}}}}}} }});
+}
+
+// Init first tab
+initOverview();
+initialized.overview = true;
+</script>
+</body>
+</html>
