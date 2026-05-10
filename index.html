@@ -316,23 +316,34 @@
     <h1>U.S. &rarr; India: The Great Offshoring (2000&ndash;2025)</h1>
     <p class="tagline">Interactive analysis of H-1B visa usage, outsourcing trends, and labor market impact &mdash; from official USCIS, DOL, and BLS data.</p>
     <p class="anchor">&#9650; Anchored to Year 2000: peak U.S. labor force participation (67.3%)</p>
-    <nav class="tab-nav" role="tablist">
-      <button class="tab-btn active" data-tab="overview" role="tab">Overview</button>
-      <button class="tab-btn" data-tab="h1b" role="tab">H-1B Visas</button>
-      <button class="tab-btn" data-tab="national" role="tab">50-State Data</button>
-      <button class="tab-btn" data-tab="massachusetts" role="tab">Massachusetts</button>
-      <button class="tab-btn" data-tab="jobs" role="tab">Real Jobs &amp; Wages</button>
-      <button class="tab-btn" data-tab="exposure" role="tab">Questionable Usage</button>
-      <button class="tab-btn" data-tab="pipeline" role="tab">The Pipeline</button>
-      <button class="tab-btn" data-tab="law" role="tab">The Law</button>
-      <button class="tab-btn" data-tab="ai" role="tab">The AI Era</button>
-      <button class="tab-btn" data-tab="timeline" role="tab">Sources</button>
+    <div class="tab-nav-wrap">
+    <nav class="tab-nav" role="tablist" aria-label="Dashboard sections">
+      <button class="tab-btn active" data-tab="overview" role="tab" aria-selected="true" tabindex="0" id="tab-btn-overview" aria-controls="panel-overview">Overview</button>
+      <button class="tab-btn" data-tab="h1b" role="tab" aria-selected="false" tabindex="-1" id="tab-btn-h1b" aria-controls="panel-h1b">H-1B Visas</button>
+      <button class="tab-btn" data-tab="national" role="tab" aria-selected="false" tabindex="-1" id="tab-btn-national" aria-controls="panel-national">50-State Data</button>
+      <button class="tab-btn" data-tab="massachusetts" role="tab" aria-selected="false" tabindex="-1" id="tab-btn-massachusetts" aria-controls="panel-massachusetts">Massachusetts</button>
+      <button class="tab-btn" data-tab="jobs" role="tab" aria-selected="false" tabindex="-1" id="tab-btn-jobs" aria-controls="panel-jobs">Real Jobs &amp; Wages</button>
+      <button class="tab-btn" data-tab="exposure" role="tab" aria-selected="false" tabindex="-1" id="tab-btn-exposure" aria-controls="panel-exposure">Questionable Usage</button>
+      <button class="tab-btn" data-tab="pipeline" role="tab" aria-selected="false" tabindex="-1" id="tab-btn-pipeline" aria-controls="panel-pipeline">The Pipeline</button>
+      <button class="tab-btn" data-tab="law" role="tab" aria-selected="false" tabindex="-1" id="tab-btn-law" aria-controls="panel-law">The Law</button>
+      <button class="tab-btn" data-tab="ai" role="tab" aria-selected="false" tabindex="-1" id="tab-btn-ai" aria-controls="panel-ai">The AI Era</button>
+      <button class="tab-btn" data-tab="timeline" role="tab" aria-selected="false" tabindex="-1" id="tab-btn-timeline" aria-controls="panel-timeline">Sources</button>
     </nav>
+    </div>
   </div>
 </div>
 
 <!-- ======================= TAB 1: OVERVIEW ======================= -->
 <div class="tab-panel active" id="panel-overview">
+  <div class="callout" id="card-fy25-update" style="border-left-color:#00e5ff; background:linear-gradient(145deg,#001a25,#002a3a); border-color:#005577; color:#cdeefa; margin-top:18px;">
+    <strong style="color:#00e5ff;">FY2025 FINAL NUMBERS (Just Released):</strong> The USCIS Annual Report to Congress (Feb&nbsp;11, 2026) confirms <strong>456,725</strong> petitions filed (+7% YoY) but only <strong>406,348 approvals</strong> &mdash; a <strong style="color:#ff6d00;">17.8% drop</strong> and a five-year low. <strong>India received ~283,772 H-1Bs (~70%)</strong>. <strong>72%</strong> of approvals were extensions/renewals, not new hires. The <strong style="color:#ff1744;">$100,000 supplemental fee</strong> took effect Sep&nbsp;21, 2025. The <strong style="color:#d500f9;">wage-weighted lottery</strong> (Level&nbsp;IV = 4 entries, Level&nbsp;I = 1) is effective Feb&nbsp;27, 2026 for the FY2027 cap. <span style="opacity:0.8;">See <a href="#tab=law" style="color:#00e5ff;text-decoration:underline;">The Law</a> for the full timeline.</span>
+  </div>
+  <div class="kpi-strip" style="margin-top:14px;">
+    <div class="kpi"><div class="kpi-val c" style="color:#00e5ff;text-shadow:0 0 20px rgba(0,229,255,0.5);">456,725</div><div class="kpi-lbl">FY2025 Petitions Filed<br>(+7% vs FY2024)</div></div>
+    <div class="kpi"><div class="kpi-val r">406,348</div><div class="kpi-lbl">FY2025 Approvals<br>(&minus;17.8% YoY, 5-yr low)</div></div>
+    <div class="kpi"><div class="kpi-val o">$100K</div><div class="kpi-lbl">New H-1B Fee<br>Effective Sep 21, 2025</div></div>
+    <div class="kpi"><div class="kpi-val p">4&times; vs 1&times;</div><div class="kpi-lbl">Wage-Weighted Lottery<br>Level IV vs Level I (FY2027)</div></div>
+  </div>
   <div class="kpi-strip">
     <div class="kpi"><div class="kpi-val y">67.3% &rarr; 62.4%</div><div class="kpi-lbl">U.S. Labor Participation<br>2000 vs 2025</div></div>
     <div class="kpi"><div class="kpi-val r">&minus;4.5M</div><div class="kpi-lbl">U.S. Manufacturing<br>Jobs Lost Since 2000</div></div>
@@ -840,6 +851,80 @@ body { font-family: 'Segoe UI', system-ui, -apple-system, sans-serif; background
   .hero h1 { font-size: 1.2rem; }
   .tab-btn { padding: 8px 14px; font-size: 0.7rem; }
 }
+
+/* ===== TAB NAV: scroll fade-edge on mobile so users see it scrolls ===== */
+.tab-nav-wrap { position: relative; }
+.tab-nav-wrap::after {
+  content: ''; position: absolute; top: 0; right: 0; width: 32px; height: 100%;
+  background: linear-gradient(to right, rgba(10,10,32,0), rgba(10,10,32,0.95));
+  pointer-events: none; opacity: 0; transition: opacity 0.2s;
+}
+.tab-nav-wrap.scrollable-right::after { opacity: 1; }
+.tab-btn:focus-visible { outline: 2px solid #0088ff; outline-offset: -2px; }
+
+/* ===== Last-updated stamp ===== */
+.last-updated {
+  display: inline-block; margin-left: 10px; padding: 2px 8px;
+  font-size: 0.66rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px;
+  color: #00e5ff; background: rgba(0,229,255,0.08);
+  border: 1px solid rgba(0,229,255,0.3); border-radius: 4px;
+  text-shadow: 0 0 8px rgba(0,229,255,0.4);
+}
+
+/* ===== Copy-link button on each card ===== */
+.card { position: relative; }
+.card-share {
+  position: absolute; top: 10px; right: 10px;
+  width: 28px; height: 28px; padding: 0;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 0.85rem; line-height: 1;
+  background: rgba(10,10,32,0.55); color: #b0b8d0;
+  border: 1px solid rgba(0,136,255,0.25); border-radius: 6px;
+  cursor: pointer; opacity: 0; transition: opacity 0.18s, color 0.18s, border-color 0.18s, transform 0.18s;
+  z-index: 5;
+}
+.card:hover .card-share, .card-share:focus-visible { opacity: 1; }
+.card-share:hover { color: #ffffff; border-color: #0088ff; transform: scale(1.08); }
+.card-share:focus-visible { outline: 2px solid #0088ff; outline-offset: 2px; }
+
+/* Briefly highlight a card when arrived at via #card= */
+@keyframes cardFlash {
+  0% { box-shadow: 0 0 0 0 rgba(0,136,255,0.0); border-color: var(--border-card); }
+  20% { box-shadow: 0 0 30px 4px rgba(0,136,255,0.55); border-color: #0088ff; }
+  100% { box-shadow: 0 0 0 0 rgba(0,136,255,0.0); border-color: var(--border-card); }
+}
+.card-flash { animation: cardFlash 1.5s ease; }
+
+/* ===== Toast (copy-link feedback) ===== */
+.toast {
+  position: fixed; left: 50%; bottom: 32px; transform: translateX(-50%) translateY(20px);
+  padding: 10px 18px; font-size: 0.82rem; font-weight: 700;
+  color: #ffffff; background: linear-gradient(145deg, #0d0d35, #1a1a55);
+  border: 1px solid #0088ff; border-radius: 8px;
+  box-shadow: 0 8px 30px rgba(0,100,255,0.35), 0 0 40px rgba(0,136,255,0.15);
+  opacity: 0; pointer-events: none; transition: opacity 0.2s, transform 0.2s;
+  z-index: 10000;
+}
+.toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
+
+/* ===== Print stylesheet ===== */
+@media print {
+  body { background: #ffffff !important; color: #000000 !important; }
+  #splash { display: none !important; }
+  #dashboard { opacity: 1 !important; visibility: visible !important; }
+  .hero { position: static !important; box-shadow: none !important; background: #ffffff !important; padding: 12px 0 !important; border-bottom: 2px solid #000 !important; }
+  .hero h1 { -webkit-text-fill-color: #000 !important; background: none !important; color: #000 !important; animation: none !important; text-shadow: none !important; }
+  .hero .tagline, .hero .anchor { color: #333 !important; text-shadow: none !important; }
+  .last-updated { color: #000 !important; background: #fff !important; border-color: #000 !important; text-shadow: none !important; }
+  .tab-nav, .card-share, .splash-enter { display: none !important; }
+  /* Show ALL panels in print so a single PDF contains everything */
+  .tab-panel { display: block !important; page-break-after: always; max-width: 100% !important; }
+  .tab-panel:last-child { page-break-after: auto; }
+  .card, .kpi { background: #fff !important; border: 1px solid #888 !important; box-shadow: none !important; color: #000 !important; page-break-inside: avoid; }
+  .card h3, .kpi-lbl, .kpi-val, .card .desc { color: #000 !important; text-shadow: none !important; }
+  canvas { max-width: 100% !important; height: auto !important; }
+  .ghost-text { display: none !important; }
+}
 </style>
 
 
@@ -906,19 +991,82 @@ document.getElementById('stateSearch').addEventListener('input', function(e) {
 // ===== TAB SYSTEM =====
 const chartInstances = {};
 let initialized = { overview: false };
+const VALID_TABS = ['overview','h1b','national','massachusetts','jobs','exposure','pipeline','law','ai','timeline'];
 
-document.querySelectorAll('.tab-btn').forEach(btn => {
-  btn.addEventListener('click', () => {
-    document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
-    document.querySelectorAll('.tab-panel').forEach(p => p.classList.remove('active'));
-    btn.classList.add('active');
-    const tab = btn.dataset.tab;
-    document.getElementById('panel-' + tab).classList.add('active');
-    if (!initialized[tab]) { initTab(tab); initialized[tab] = true; }
-    // Resize charts in active tab
-    Object.values(chartInstances).forEach(c => c.resize());
+function setActiveTab(tab, opts) {
+  opts = opts || {};
+  if (!VALID_TABS.includes(tab)) tab = 'overview';
+  document.querySelectorAll('.tab-btn').forEach(b => {
+    const isActive = b.dataset.tab === tab;
+    b.classList.toggle('active', isActive);
+    b.setAttribute('aria-selected', isActive ? 'true' : 'false');
+    b.setAttribute('tabindex', isActive ? '0' : '-1');
+  });
+  document.querySelectorAll('.tab-panel').forEach(p => p.classList.remove('active'));
+  const panel = document.getElementById('panel-' + tab);
+  if (panel) panel.classList.add('active');
+  if (!initialized[tab]) { initTab(tab); initialized[tab] = true; }
+  Object.values(chartInstances).forEach(c => c.resize());
+  if (opts.updateHash !== false) {
+    const newHash = '#tab=' + tab;
+    if (location.hash !== newHash) history.replaceState(null, '', newHash);
+  }
+  if (opts.scroll !== false && opts.fromUser) {
+    const hero = document.querySelector('.hero');
+    if (hero) window.scrollTo({ top: hero.offsetHeight, behavior: 'smooth' });
+  }
+}
+
+document.querySelectorAll('.tab-btn').forEach((btn, idx, all) => {
+  btn.addEventListener('click', () => setActiveTab(btn.dataset.tab, { fromUser: true }));
+  btn.addEventListener('keydown', e => {
+    let next = null;
+    if (e.key === 'ArrowRight') next = (idx + 1) % all.length;
+    else if (e.key === 'ArrowLeft') next = (idx - 1 + all.length) % all.length;
+    else if (e.key === 'Home') next = 0;
+    else if (e.key === 'End') next = all.length - 1;
+    if (next !== null) {
+      e.preventDefault();
+      const nb = all[next];
+      nb.focus();
+      setActiveTab(nb.dataset.tab, { fromUser: true });
+    }
   });
 });
+
+function parseHash() {
+  const m = (location.hash || '').match(/tab=([a-z0-9-]+)/i);
+  return m ? m[1].toLowerCase() : null;
+}
+function applyHash(opts) {
+  const tab = parseHash();
+  if (tab && VALID_TABS.includes(tab)) {
+    setActiveTab(tab, Object.assign({ updateHash: false }, opts || {}));
+    return tab;
+  }
+  return null;
+}
+window.addEventListener('hashchange', () => applyHash());
+
+// ===== Mobile tab-nav: show fade indicator when there's more to scroll =====
+(function () {
+  const wrap = document.querySelector('.tab-nav-wrap');
+  const nav = document.querySelector('.tab-nav');
+  if (!wrap || !nav) return;
+  function update() {
+    const more = nav.scrollWidth - nav.clientWidth - nav.scrollLeft > 4;
+    wrap.classList.toggle('scrollable-right', more);
+  }
+  nav.addEventListener('scroll', update, { passive: true });
+  window.addEventListener('resize', update);
+  setTimeout(update, 50);
+  // When activating a tab on mobile, scroll the chosen button into view
+  document.querySelectorAll('.tab-btn').forEach(b => {
+    b.addEventListener('click', () => {
+      try { b.scrollIntoView({ behavior: 'smooth', inline: 'center', block: 'nearest' }); } catch (_) {}
+    });
+  });
+})();
 
 function mk(id, cfg) { chartInstances[id] = new Chart(document.getElementById(id), cfg); }
 
@@ -1303,9 +1451,86 @@ function initAI() {
   mk('c_aiMath', { type:'bar', data:{ labels:['Current H-1B\nApprovals/Year','Outsourcing-Driven\n(est. 40%)','AI Eliminates 30%\nof Outsourcing Need','AI Eliminates 50%\nof Outsourcing Need','Remaining Need\n(Conservative)','Remaining Need\n(Aggressive)'], datasets:[{ label:'Approvals (K)', data:[400,160,112,80,288,240], backgroundColor:['rgba(0,136,255,0.6)','rgba(255,109,0,0.7)','rgba(255,23,68,0.6)','rgba(255,23,68,0.9)','rgba(0,230,118,0.5)','rgba(0,230,118,0.7)'], borderColor:['#0088ff','#ff6d00','#ff1744','#ff1744','#00e676','#00e676'], borderWidth:2, borderRadius:6 }]}, options:{ responsive:true, scales:{ y:{grid:{color:gc},ticks:{callback:v=>v+'K'},title:{display:true,text:'Approvals per Year (K)',color:'#8090b0'}}, x:{grid:{color:gc},ticks:{font:{size:8}}} }, plugins:{tooltip:{...tt,callbacks:{label:ctx=>ctx.parsed.y+'K approvals/year'}}, legend:{display:false}, annotation:{annotations:{line:{type:'line',yMin:85,yMax:85,borderColor:'rgba(0,229,255,0.4)',borderWidth:1,borderDash:[6,4],label:{display:true,content:'Original 1990 Cap: 65K',position:'start',backgroundColor:'rgba(0,229,255,0.2)',color:'#00e5ff',font:{size:9}}}}}} }});
 }
 
-// Init first tab
-initOverview();
-initialized.overview = true;
+// ===== Init first tab (honoring URL hash if present) =====
+const hashTab = parseHash();
+if (hashTab && VALID_TABS.includes(hashTab) && hashTab !== 'overview') {
+  // Deep link: skip the splash, jump straight to the requested tab
+  const splash = document.getElementById('splash');
+  const dash = document.getElementById('dashboard');
+  if (splash) splash.style.display = 'none';
+  if (dash) dash.classList.add('visible');
+  setActiveTab(hashTab, { updateHash: false, scroll: false });
+} else {
+  initOverview();
+  initialized.overview = true;
+  // Make the default Overview button keyboard-focusable
+  const ovBtn = document.querySelector('.tab-btn[data-tab="overview"]');
+  if (ovBtn) { ovBtn.setAttribute('aria-selected','true'); ovBtn.setAttribute('tabindex','0'); }
+  document.querySelectorAll('.tab-btn:not(.active)').forEach(b => b.setAttribute('tabindex','-1'));
+}
+
+// ===== Copy-link button per chart card =====
+function showToast(msg) {
+  let t = document.getElementById('toast');
+  if (!t) {
+    t = document.createElement('div');
+    t.id = 'toast';
+    t.className = 'toast';
+    document.body.appendChild(t);
+  }
+  t.textContent = msg;
+  t.classList.add('show');
+  clearTimeout(t._h);
+  t._h = setTimeout(() => t.classList.remove('show'), 1800);
+}
+document.querySelectorAll('.tab-panel .card').forEach((card, i) => {
+  // Give the card a stable id if it doesn't already have one
+  if (!card.id) card.id = 'card-' + i;
+  const btn = document.createElement('button');
+  btn.className = 'card-share';
+  btn.type = 'button';
+  btn.setAttribute('aria-label', 'Copy link to this chart');
+  btn.title = 'Copy link to this chart';
+  btn.innerHTML = '\u{1F517}';
+  btn.addEventListener('click', e => {
+    e.stopPropagation();
+    const tab = card.closest('.tab-panel')?.id?.replace(/^panel-/, '') || 'overview';
+    const url = location.origin + location.pathname + '#tab=' + tab + '&card=' + card.id;
+    const fallback = () => { showToast('Link: ' + url); };
+    if (navigator.clipboard && navigator.clipboard.writeText) {
+      navigator.clipboard.writeText(url).then(() => showToast('Link copied'), fallback);
+    } else { fallback(); }
+  });
+  card.appendChild(btn);
+});
+
+// Scroll to a specific card if #card= is in the hash (after tab activation)
+function scrollToCardFromHash() {
+  const m = (location.hash || '').match(/card=([a-zA-Z0-9_-]+)/);
+  if (!m) return;
+  const el = document.getElementById(m[1]);
+  if (el) {
+    setTimeout(() => {
+      el.scrollIntoView({ behavior: 'smooth', block: 'center' });
+      el.classList.add('card-flash');
+      setTimeout(() => el.classList.remove('card-flash'), 1600);
+    }, 200);
+  }
+}
+window.addEventListener('hashchange', scrollToCardFromHash);
+scrollToCardFromHash();
+
+// ===== "Last updated" stamp in the hero =====
+(function stampUpdated() {
+  const tagline = document.querySelector('.hero .tagline');
+  if (!tagline || document.getElementById('lastUpdated')) return;
+  const stamp = document.createElement('span');
+  stamp.id = 'lastUpdated';
+  stamp.className = 'last-updated';
+  stamp.textContent = 'Updated May 2026';
+  stamp.title = 'Dashboard last refreshed';
+  tagline.appendChild(stamp);
+})();
 
 </script>
 </body>
