@@ -455,6 +455,24 @@
     <div class="card wide"><h3>MA Academia H-1B Footprint (FY26 Q1)</h3><p class="desc">253 LCAs across Massachusetts universities &mdash; 9% of state total. Harvard leads with 85 filings, MIT second at 50, UMass Chan Medical third at 33. Academia roles cluster at Level I&ndash;II due to postdoc/research appointments. Source: DOL LCA FY26 Q1.</p><div class="cw" style="height:360px"><canvas id="c_maAcad"></canvas></div></div>
   </div>
   <div class="sources" style="margin-top:18px"><strong>Sources:</strong> DOL Office of Foreign Labor Certification &bull; LCA Disclosure Data FY2026 Q1 (Oct 1 &ndash; Dec 31, 2025) &bull; 2,799 Massachusetts worksite records &bull; wages standardized to annual equivalents (hourly &times; 2080) &bull; USCIS H-1B Employer Data Hub FY2026 &bull; MA-resident employers ranked by initial &amp; continuation receipts.</div>
+
+  <!-- ======== CASE STUDY: AMAZON IN BOSTON (FY2026 Q1, added 2026 refresh) ======== -->
+  <div class="sec-head" style="margin-top:42px">
+    <h2 style="background: linear-gradient(90deg, #ff9900, #00e5ff); -webkit-background-clip: text; -webkit-text-fill-color: transparent;">Case Study: Amazon in Boston &mdash; FY2026 Q1</h2>
+    <p>Much of Massachusetts&rsquo; H-1B floor is low-wage care and human-services work &mdash; but the state&rsquo;s largest big-tech case looks the opposite. In Q1 FY2026, Amazon&rsquo;s Boston entities (Amazon.com Services, AWS, Amazon Development Center, Amazon Data Services) filed <strong>59 certified LCAs</strong>, overwhelmingly six-figure software-engineering roles. Median role-average offered wage: <strong>$154,600</strong> &mdash; 21% above the statewide $127,300 median. The well-paid jobs, filled on H-1B.</p>
+  </div>
+  <div class="kpi-strip">
+    <div class="kpi"><div class="kpi-val b">59</div><div class="kpi-lbl">Certified LCAs<br>Amazon &middot; Boston (FY26 Q1)</div></div>
+    <div class="kpi"><div class="kpi-val g">28</div><div class="kpi-lbl">Unique Roles</div></div>
+    <div class="kpi"><div class="kpi-val y">$154,600</div><div class="kpi-lbl">Median Role<br>Average Wage</div></div>
+    <div class="kpi"><div class="kpi-val p">$207,646</div><div class="kpi-lbl">Highest Role Avg<br>(Mgr III, Solutions Arch)</div></div>
+    <div class="kpi"><div class="kpi-val r">22</div><div class="kpi-lbl">Software Dev Engineer<br>filings (37%)</div></div>
+  </div>
+  <div class="grid">
+    <div class="card wide"><h3>Amazon Boston &mdash; Top Roles by Filing Count (FY26 Q1)</h3><p class="desc"><span style="color:#00e5ff;font-weight:700;">&#9632; Cyan = role avg &ge; $150K</span> &nbsp;|&nbsp; <span style="color:#0088ff;font-weight:700;">&#9632; Blue = below $150K</span>. Software Development Engineer (all levels) is the dominant role &mdash; 22 of 59 filings. Source: DOL LCA FY2026 Q1.</p><div class="cw" style="height:480px"><canvas id="c_amznRoles"></canvas></div></div>
+    <div class="card"><h3>Amazon Boston &mdash; Filings by Salary Band</h3><p class="desc">Two-thirds of Amazon&rsquo;s Boston filings offer $130K or more; only 8 fall below $100K (entry data-associate and support roles). Source: DOL LCA FY2026 Q1.</p><div class="cw" style="height:300px"><canvas id="c_amznBands"></canvas></div></div>
+  </div>
+  <div class="sources" style="margin-top:18px"><strong>Sources:</strong> DOL Office of Foreign Labor Certification &bull; LCA Disclosure Data FY2026 Q1 (Oct 1 &ndash; Dec 31, 2025) &bull; Amazon entities (Amazon.com Services, Amazon Web Services, Amazon Development Center, Amazon Data Services) at Boston, MA worksites &bull; certified filings only &bull; hourly wages annualized (&times; 2080) &bull; role titles consolidated across capitalization variants.</div>
 </div>
 
 <!-- ======================= TAB 5: REAL JOBS & WAGES ======================= -->
@@ -1119,6 +1137,38 @@ function initMassachusetts() {
   const acN = ['Harvard University','MIT','UMass Chan Medical','Trustees of Boston U','Northeastern U','Tufts University','UMass Amherst','Boston College','UMass Lowell','Brandeis University'];
   const acC = [85,50,33,24,14,8,7,7,6,6];
   mk('c_maAcad', { type:'bar', data:{ labels:acN, datasets:[{ label:'Academia LCAs', data:acC, backgroundColor:'rgba(0,229,255,0.65)', borderColor:'#00e5ff', borderWidth:1, borderRadius:5 }]}, options:{ responsive:true, maintainAspectRatio:false, indexAxis:'y', plugins:{ legend:{display:false}, tooltip:{...tt,callbacks:{label:ctx=>ctx.parsed.x+' LCAs'}} }, scales:{ x:{grid:{color:gc},title:{display:true,text:'LCA Filings',color:'#8090b0'}}, y:{grid:{color:gc},ticks:{font:{size:10}}} } }});
+
+  // --- 10. Amazon Boston case study (FY2026 Q1, DOL LCA disclosure) ---
+  const amzn = [
+    {t:'Software Development Engineer II',c:6,a:141597},{t:'Software Development Engineer I',c:6,a:116403},
+    {t:'Software Development Engineer III',c:4,a:191878},{t:'Software Dev Engineer II',c:4,a:165500},
+    {t:'Professional Services II',c:4,a:150650},{t:'Front-End Engineer II',c:3,a:173233},
+    {t:'Solutions Architect III',c:3,a:172100},{t:'Financial Analyst III',c:3,a:104761},
+    {t:'ML Data Associate III',c:3,a:68099},{t:'Software Dev Engineer III',c:2,a:201770},
+    {t:'Applied Scientist II',c:2,a:169050},{t:'Product Manager III',c:2,a:146900},
+    {t:'Program Manager II',c:2,a:97739},{t:'Manager III, Solutions Architect',c:1,a:207646},
+    {t:'Database Engineer III',c:1,a:184700},{t:'Solution Architect II',c:1,a:184400},
+    {t:'Technical Business Developer III',c:1,a:182000},{t:'Security Engineer II',c:1,a:175000},
+    {t:'Solutions Architect II',c:1,a:160000},{t:'Enterprise Act Engineer III',c:1,a:158800},
+    {t:'Data Engineer III',c:1,a:154600},{t:'Economist III',c:1,a:151570},
+    {t:'Support Engineer I-External',c:1,a:118000},{t:'Business Intelligence Engineer II',c:1,a:114088},
+    {t:'System Development Engineer I',c:1,a:109040},{t:'Support Engineer III',c:1,a:99000},
+    {t:'Functional Marketing II',c:1,a:80642},{t:'Agentic AI Teacher',c:1,a:73000},
+  ];
+  const amznTop = amzn.slice().sort((x,y)=>y.c-x.c||y.a-x.a).slice(0,12);
+  mk('c_amznRoles', { type:'bar', data:{ labels:amznTop.map(r=>r.t), datasets:[{ label:'Certified LCAs', data:amznTop.map(r=>r.c),
+    backgroundColor:amznTop.map(r=>r.a>=150000?'rgba(0,229,255,0.7)':'rgba(0,136,255,0.6)'),
+    borderColor:amznTop.map(r=>r.a>=150000?'#00e5ff':'#0088ff'), borderWidth:1, borderRadius:4 }]},
+    options:{ responsive:true, maintainAspectRatio:false, indexAxis:'y',
+      plugins:{ legend:{display:false}, tooltip:{...tt,callbacks:{label:ctx=>{const r=amznTop[ctx.dataIndex]; return r.c+' filings · avg $'+r.a.toLocaleString();}}} },
+      scales:{ x:{grid:{color:gc},title:{display:true,text:'Certified LCA Filings',color:'#8090b0'},ticks:{precision:0}}, y:{grid:{color:gc},ticks:{font:{size:10}}} } }});
+
+  const amznBands = [{l:'< $100K',min:0,max:100000},{l:'$100–130K',min:100000,max:130000},{l:'$130–160K',min:130000,max:160000},{l:'$160–200K',min:160000,max:200000},{l:'> $200K',min:200000,max:Infinity}];
+  const amznBandC = amznBands.map(b=>amzn.filter(r=>r.a>=b.min&&r.a<b.max).reduce((s,r)=>s+r.c,0));
+  mk('c_amznBands', { type:'bar', data:{ labels:amznBands.map(b=>b.l), datasets:[{ label:'Filings', data:amznBandC,
+    backgroundColor:'rgba(0,229,255,0.6)', borderColor:'#00e5ff', borderWidth:1, borderRadius:4 }]},
+    options:{ responsive:true, maintainAspectRatio:false, plugins:{ legend:{display:false}, tooltip:{...tt,callbacks:{label:ctx=>ctx.parsed.y+' filings'}} },
+      scales:{ y:{grid:{color:gc},title:{display:true,text:'LCA Filings',color:'#8090b0'},ticks:{precision:0}}, x:{grid:{color:gc}} } }});
 }
 
 // ===== JOBS TAB =====
