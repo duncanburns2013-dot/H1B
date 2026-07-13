@@ -119,12 +119,28 @@ SHORT_EMPLOYER = {
     "THERMO FISHER": "Thermo Fisher Scientific",
     "SCHNEIDER ELECTRIC": "Schneider Electric USA",
     "VERTEX PHARMACEUTICALS": "Vertex Pharmaceuticals",
-    "MASS GENERAL": "Mass General Hospital",
-    "GENERAL HOSP": "Mass General Hospital",
+    # --- Mass General Brigham system consolidated to one parent ---
+    "LAWRENCE GENERAL": "Lawrence General Hospital",   # guard: must precede GENERAL HOSP
+    "MASS GENERAL BRIGHAM": "Mass General Brigham",
+    "PARTNERS HEALTHCARE": "Mass General Brigham",
+    "GENERAL HOSPITAL CORP": "Mass General Brigham",
+    "GENERAL HOSP": "Mass General Brigham",
+    "MASS GENERAL": "Mass General Brigham",
+    "MASSACHUSETTS GENERAL": "Mass General Brigham",
+    "MCLEAN HOSPITAL": "Mass General Brigham",
+    "MASSACHUSETTS EYE AND EAR": "Mass General Brigham",
+    "MASS EYE AND EAR": "Mass General Brigham",
+    "MASSACHUSETTS EYE & EAR": "Mass General Brigham",
+    "SPAULDING REHAB": "Mass General Brigham",
+    "NEWTON-WELLESLEY": "Mass General Brigham",
+    "NEWTON WELLESLEY": "Mass General Brigham",
+    "MGH INSTITUTE": "Mass General Brigham",
+    "AMAZON": "Amazon",   # consolidate Amazon.com / AWS / Dev Center
     "AKAMAI": "Akamai Technologies",
     "STAPLES": "Staples Inc",
     "HARVARD": "Harvard University",
-    "BRIGHAM AND WOMEN": "Brigham & Women's Hospital",
+    "BRIGHAM AND WOMEN": "Mass General Brigham",
+    "BRIGHAM & WOMEN": "Mass General Brigham",
     "DANA-FARBER": "Dana-Farber Cancer Inst",
     "MASSACHUSETTS INSTITUTE OF TECHNOLOGY": "MIT",
     "WAYFAIR": "Wayfair LLC",
@@ -437,8 +453,14 @@ def main():
     # ---- USCIS MA employers ----------------------------------------------
     if ma_path:
         log("Reading USCIS MA file: %s" % os.path.basename(ma_path))
-        recs = parse_uscis(ma_path)[:20]
-        f26eN = [short_name(n, SHORT_EMPLOYER) for n, _ in recs]
+        # consolidate parent orgs (map -> sum) BEFORE ranking, so a health
+        # system split across many legal entities counts as one employer.
+        _agg = {}
+        for _n, _c in parse_uscis(ma_path):
+            _k = short_name(_n, SHORT_EMPLOYER)
+            _agg[_k] = _agg.get(_k, 0) + _c
+        recs = sorted(_agg.items(), key=lambda kv: -kv[1])[:20]
+        f26eN = [n for n, _ in recs]
         f26eC = [c for _, c in recs]
         f26eO = [is_outsourcing(n) for n, _ in recs]
         html = set_const(html, "f26eN", f26eN)
