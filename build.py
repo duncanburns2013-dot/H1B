@@ -442,8 +442,12 @@ def main():
         html = set_html_marker(html, "maBiotechLbl",
                                "LCAs ({}%)".format(bio_pct))
         if fy and q:
-            html = set_html_marker(html, "maQuarter1", "FY%s Q%s" % (fy, q))
-            html = set_html_marker(html, "maQuarter2", "FY%s Q%s" % (fy[2:], q))
+            # DOL quarterly LCA disclosure files are cumulative fiscal-year-to-
+            # date -- the "Q3" file holds every decision from Oct 1 through Jun
+            # 30, not just the Apr-Jun quarter -- so label the KPIs as YTD, not
+            # a single quarter, to avoid implying a false 3-month window.
+            html = set_html_marker(html, "maQuarter1", "FY%s YTD" % fy)
+            html = set_html_marker(html, "maQuarter2", "FY%s YTD" % fy[2:])
         changed.append("MA deep-dive: %d LCAs, median $%s, %d employers, "
                         "%d biotech" % (total, "{:,}".format(med_all),
                                         uniq_emp, len(bio)))
