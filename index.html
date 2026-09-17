@@ -473,6 +473,32 @@
     <div class="card"><h3>Amazon Boston &mdash; Filings by Salary Band</h3><p class="desc">85% of Amazon&rsquo;s Boston filings offer $130K or more; only 14 fall below $100K (entry data-associate and support roles). Source: DOL LCA FY2026 Q3.</p><div class="cw" style="height:300px"><canvas id="c_amznBands"></canvas></div></div>
   </div>
   <div class="sources" style="margin-top:18px"><strong>Sources:</strong> DOL Office of Foreign Labor Certification &bull; LCA Disclosure Data FY2026, cumulative year-to-date (Oct 1, 2025 &ndash; Jun 30, 2026) &bull; Amazon entities (Amazon.com Services, Amazon Web Services, Amazon Development Center, Amazon Data Services) at Boston, MA worksites &bull; certified filings only &bull; hourly wages annualized (&times; 2080) &bull; role titles consolidated across capitalization variants.</div>
+
+  <!-- ======== WHO PROCESSES MA'S H-1Bs + THE MONEY (added 2026-09) ======== -->
+  <div class="sec-head" style="margin-top:46px">
+    <h2 style="background: linear-gradient(90deg,#ffea00,#ff6d00); -webkit-background-clip:text; -webkit-text-fill-color:transparent;">Who Processes MA&rsquo;s H-1Bs &mdash; and the Money Around It</h2>
+    <p>Every MA H-1B application names the law firm that prepared it. Ranking those preparers &mdash; and cross-referencing the political money &mdash; tests the &ldquo;H-1B mill&rdquo; headlines against what Massachusetts&rsquo; own data actually shows.</p>
+  </div>
+  <div class="kpi-strip">
+    <div class="kpi"><div class="kpi-val b">76%</div><div class="kpi-lbl">Attorney/agent-filed<br>(24% self-filed)</div></div>
+    <div class="kpi"><div class="kpi-val g">776</div><div class="kpi-lbl">Distinct law firms<br>&amp; agents</div></div>
+    <div class="kpi"><div class="kpi-val y">50%</div><div class="kpi-lbl">Handled by the<br>top 10 firms</div></div>
+    <div class="kpi"><div class="kpi-val p">~4%</div><div class="kpi-lbl">At IT-staffing<br>&ldquo;bodyshop&rdquo; employers</div></div>
+    <div class="kpi"><div class="kpi-val r">84%</div><div class="kpi-lbl">Software roles at<br>Level II+ wage</div></div>
+  </div>
+  <div class="grid">
+    <div class="card wide"><h3>Top Law Firms Processing MA H-1B Filings</h3><p class="desc">The high-volume preparers are <strong>mainstream corporate immigration firms</strong> filing for brand-name direct employers (MathWorks, Vertex, Fidelity, Google, State Street) &mdash; not obscure shops filing for shells. Source: DOL LCA FY2026, MA worksite, attorney field.</p><div class="cw" style="height:520px"><canvas id="c_maFirms"></canvas></div></div>
+    <div class="card"><h3>The &ldquo;H-1B Mill&rdquo; Question &mdash; Answered for MA</h3><p class="desc">A mill = an obscure firm filing for many tiny staffing shops at entry wages. In Massachusetts the opposite holds: software H-1B is <strong>84% Level II or higher</strong>; the Level-I concentration is at <strong>hospitals &amp; universities</strong> (residents, postdocs, adjuncts, where entry wage is normal); IT-staffing &ldquo;bodyshops&rdquo; are only <strong>~4%</strong> of filings; and no high-volume firm serves mostly bodyshops (max ~11%).<br><br>What this data <em>cannot</em> see: the H-1B <em>petition</em> (USCIS I-129) and lottery-registration fraud &mdash; the actual enforcement story &mdash; live in USCIS data that is not public at case level. High filing volume is <strong>not</strong> proof of fraud.</p></div>
+  </div>
+  <div class="sec-head" style="margin-top:34px">
+    <h2 style="background: linear-gradient(90deg,#00e5ff,#0088ff); -webkit-background-clip:text; -webkit-text-fill-color:transparent;">The Money Around H-1B</h2>
+    <p>H-1B is a <strong>federal</strong> program &mdash; only Congress, DOL and USCIS set the rules. The money that actually shapes the law is federal lobbying. Massachusetts state campaign donations are a separate <em>political-footprint</em> signal, not H-1B leverage.</p>
+  </div>
+  <div class="grid">
+    <div class="card wide"><h3>Federal H-1B Lobbying (2025) &mdash; Who Actually Shapes the Law</h3><p class="desc">Disclosed 2025 spend on filings that explicitly lobby <strong>immigration / H-1B</strong>. The heavy hitters are the <strong>IT-outsourcing firms</strong> (Cognizant, Infosys, TCS) and the <strong>Compete America</strong> employer coalition &mdash; the same category that is only ~4% of MA filings. Microsoft also lobbies H-1B; MA&rsquo;s marquee users (Fidelity, MathWorks, Amazon, Google) do <strong>not</strong> &mdash; they free-ride on it. Cognizant bar is H1 in-house (a floor). Source: U.S. Senate LDA.</p><div class="cw" style="height:340px"><canvas id="c_maLobby"></canvas></div></div>
+    <div class="card wide"><h3>MA State Campaign-Finance Footprint of Top H-1B Employers</h3><p class="desc">Total contributions to <strong>Massachusetts state/local</strong> committees from each employer&rsquo;s workforce. Big MA employers fund Beacon Hill broadly (Baker, Patrick, Healey, Wu&hellip;) &mdash; a general political footprint, <strong>not</strong> H-1B influence, since a state donation can&rsquo;t move a federal program. Immigration law firms barely register. Source: MA OCPF.</p><div class="cw" style="height:340px"><canvas id="c_maStateDonors"></canvas></div></div>
+  </div>
+  <div class="sources" style="margin-top:18px"><strong>Sources:</strong> DOL OFLC LCA Disclosure Data FY2026 (MA worksite, 15,310 H-1B records) &bull; U.S. Senate Lobbying Disclosure Act database (lda.gov, 2025 filings) &bull; MA Office of Campaign &amp; Political Finance (ocpf.us) &bull; lobbying and donation figures are lawful advocacy, reported as disclosed &mdash; not evidence of wrongdoing by any named entity.</div>
 </div>
 
 <!-- ======================= TAB 5: REAL JOBS & WAGES ======================= -->
@@ -1165,6 +1191,21 @@ function initMassachusetts() {
     backgroundColor:'rgba(0,229,255,0.6)', borderColor:'#00e5ff', borderWidth:1, borderRadius:4 }]},
     options:{ responsive:true, maintainAspectRatio:false, plugins:{ legend:{display:false}, tooltip:{...tt,callbacks:{label:ctx=>ctx.parsed.y+' filings'}} },
       scales:{ y:{grid:{color:gc},title:{display:true,text:'LCA Filings',color:'#8090b0'},ticks:{precision:0}}, x:{grid:{color:gc}} } }});
+
+  // --- 11. Who processes MA H-1Bs: top law firms (added 2026-09) ---
+  const firmN = ["Berry Appleman & Leiden","Fragomen Del Rey","Wolfsdorf / WR Immigration","Ogletree Deakins","Corporate Immigration Partners","Iandoli Desai & Cronin","Erickson Immigration Group","EY Law","Clark Lau","Jackson Lewis","Mintz","Duane Morris","Zulkie Partners","Hunton Andrews Kurth","Green and Spiegel"];
+  const firmC = [1544,1496,520,494,425,283,263,256,256,229,172,141,139,130,127];
+  mk('c_maFirms', { type:'bar', data:{ labels:firmN, datasets:[{ label:'MA H-1B LCAs prepared', data:firmC, backgroundColor:'rgba(255,234,0,0.6)', borderColor:'#ffea00', borderWidth:1, borderRadius:4 }]}, options:{ responsive:true, maintainAspectRatio:false, indexAxis:'y', plugins:{ legend:{display:false}, tooltip:{...tt,callbacks:{label:ctx=>ctx.parsed.x.toLocaleString()+' LCAs prepared'}} }, scales:{ x:{grid:{color:gc},title:{display:true,text:'MA H-1B LCAs prepared (FY2026)',color:'#8090b0'}}, y:{grid:{color:gc},ticks:{font:{size:10}}} } }});
+
+  // --- 12. Federal H-1B lobbying 2025 ($K); Cognizant = H1 in-house floor ---
+  const lobN = ["Cognizant","Infosys","Tata (TCS)","Compete America"];
+  const lobC = [930,360,320,280];
+  mk('c_maLobby', { type:'bar', data:{ labels:lobN, datasets:[{ label:'2025 disclosed H-1B lobbying ($K)', data:lobC, backgroundColor:['#ff1744','#ff6d00','#ff6d00','#0088ff'], borderColor:'#050510', borderWidth:2, borderRadius:5 }]}, options:{ responsive:true, maintainAspectRatio:false, plugins:{ legend:{display:false}, tooltip:{...tt,callbacks:{label:ctx=>'$'+ctx.parsed.y+'K'+(ctx.dataIndex===0?' (H1 2025, in-house floor)':' (2025)')}} }, scales:{ y:{grid:{color:gc},title:{display:true,text:'2025 lobbying ($ thousands)',color:'#8090b0'}}, x:{grid:{color:gc}} } }});
+
+  // --- 13. MA state campaign-finance footprint of top H-1B employers ($) ---
+  const donN = ["Fidelity","Analog Devices","Wayfair","Vertex","Akamai","State Street","Staples","athenahealth","BCG","MathWorks"];
+  const donC = [1145406,324543,313889,257120,175302,136005,135149,126323,52588,41303];
+  mk('c_maStateDonors', { type:'bar', data:{ labels:donN, datasets:[{ label:'Contributions to MA state committees', data:donC, backgroundColor:'rgba(0,229,255,0.6)', borderColor:'#00e5ff', borderWidth:1, borderRadius:4 }]}, options:{ responsive:true, maintainAspectRatio:false, indexAxis:'y', plugins:{ legend:{display:false}, tooltip:{...tt,callbacks:{label:ctx=>'$'+ctx.parsed.x.toLocaleString()}} }, scales:{ x:{grid:{color:gc},title:{display:true,text:'Total to MA state/local committees ($)',color:'#8090b0'}}, y:{grid:{color:gc},ticks:{font:{size:10}}} } }});
 }
 
 // ===== JOBS TAB =====
